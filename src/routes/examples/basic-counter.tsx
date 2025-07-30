@@ -12,13 +12,13 @@ export const Route = createFileRoute('/examples/basic-counter')({
 // Example atoms
 const countAtom = atom(0)
 const doubledAtom = atom((get) => get(countAtom) * 2)
-const incrementAtom = atom(null, (get, set) => {
+const incrementAtom = atom(null, (_, set) => {
   set(countAtom, (prev) => prev + 1)
 })
-const decrementAtom = atom(null, (get, set) => {
+const decrementAtom = atom(null, (_, set) => {
   set(countAtom, (prev) => prev - 1)
 })
-const resetAtom = atom(null, (get, set) => {
+const resetAtom = atom(null, (_, set) => {
   set(countAtom, 0)
 })
 
