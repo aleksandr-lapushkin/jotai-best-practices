@@ -6,7 +6,7 @@ import { tanstackRouter } from '@tanstack/router-plugin/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: process.env.REACT_ENV === 'production' ? '/jotai-best-practices' : '/',
+  base: '/jotai-best-practices',
   plugins: [
     tanstackRouter({
       target: 'react',

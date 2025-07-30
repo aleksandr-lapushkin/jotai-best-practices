@@ -11,6 +11,7 @@ import { routeTree } from './routeTree.gen'
 // Create a new router instance  
 const router = createRouter({ 
   routeTree,
+  basepath: '/jotai-best-practices',
   defaultPreload: 'intent',
   defaultPreloadStaleTime: 0,
   // Enable scroll restoration: scroll to top on new pages, restore position on back/forward
