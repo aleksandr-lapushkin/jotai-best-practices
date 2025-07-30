@@ -14,9 +14,28 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { Link } from "@tanstack/react-router"
+import { Link, useRouterState } from "@tanstack/react-router"
+import type { FileRouteTypes } from "@/routeTree.gen"
 
-const data = {
+// Type-safe route references using the generated route tree
+type RoutePath = FileRouteTypes['fullPaths']
+
+interface NavItem {
+  title: string
+  url: RoutePath
+}
+
+interface NavSection {
+  title: string
+  url: RoutePath
+  items?: NavItem[]
+}
+
+interface NavData {
+  navMain: NavSection[]
+}
+
+const data: NavData = {
   navMain: [
     {
       title: "Overview",
@@ -120,13 +139,28 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const routerState = useRouterState()
+  const currentPath = routerState.location.pathname
+
+  // Helper function to check if a path is active
+  const isPathActive = (path: string) => {
+    // Exact match for current path
+    if (currentPath === path) return true
+    
+    // For index paths like /concepts, also match /concepts/
+    if (path !== '/' && currentPath.startsWith(path + '/')) return true
+    
+    return false
+  }
+
+
   return (
     <Sidebar {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <a href="#">
+              <Link to="/">
                 <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
                   <GalleryVerticalEnd className="size-4" />
                 </div>
@@ -134,7 +168,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <span className="font-medium">Jotai Best Practices</span>
                   <span className="">Presentation Guide</span>
                 </div>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -142,26 +176,34 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu>
-            {data.navMain.map((item) => (
-              <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton asChild>
-                  <Link to={item.url} className="font-medium">
-                    {item.title}
-                  </Link>
-                </SidebarMenuButton>
-                {item.items?.length ? (
-                  <SidebarMenuSub>
-                    {item.items.map((item) => (
-                      <SidebarMenuSubItem key={item.title}>
-                        <SidebarMenuSubButton asChild isActive={item.isActive}>
-                          <a href={item.url}>{item.title}</a>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                    ))}
-                  </SidebarMenuSub>
-                ) : null}
-              </SidebarMenuItem>
-            ))}
+            {data.navMain.map((section) => {
+              const sectionActive = isPathActive(section.url)
+              
+              return (
+                <SidebarMenuItem key={section.title}>
+                  <SidebarMenuButton asChild isActive={sectionActive}>
+                    <Link to={section.url} className="font-medium">
+                      {section.title}
+                    </Link>
+                  </SidebarMenuButton>
+                  {section.items?.length ? (
+                    <SidebarMenuSub>
+                      {section.items.map((item) => {
+                        const itemActive = isPathActive(item.url)
+                        
+                        return (
+                          <SidebarMenuSubItem key={item.title}>
+                            <SidebarMenuSubButton asChild isActive={itemActive}>
+                              <Link to={item.url}>{item.title}</Link>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                        )
+                      })}
+                    </SidebarMenuSub>
+                  ) : null}
+                </SidebarMenuItem>
+              )
+            })}
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
