@@ -282,6 +282,72 @@ export const Atoms = {
           </CardContent>
         </Card>
 
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <span className="text-2xl">📚</span>
+              Direct Usage vs Facade Hooks
+            </CardTitle>
+            <CardDescription>
+              Prefer to read atoms and actions directly rather than via facade hooks
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p>
+              This allows consumers to mount only the atoms they require, leading to smaller performance 
+              overhead and easier testing. Avoid wrapping atoms in custom hooks unless you have a compelling reason.
+            </p>
+            
+            <div className="space-y-4">
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+                  <span className="font-semibold text-green-700 dark:text-green-300">Do: Direct Usage</span>
+                </div>
+                <CodeBlock language="typescript">
+{`const myAtom = atom("hello")
+const mutateMyAtom = atom(null, (get, set, payload: string) => 
+  set(myAtom, \`hello \${payload}\`)
+)
+
+// In component
+const myAtomValue = useAtomValue(myAtom)
+const mutateMyAtomCallback = useSetAtom(mutateMyAtom)`}
+                </CodeBlock>
+              </div>
+
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
+                  <span className="font-semibold text-red-700 dark:text-red-300">Don't: Facade Hooks</span>
+                </div>
+                <CodeBlock language="typescript">
+{`// Somewhere outside the component
+const useMyState = () => {
+    const myAtomValue = useAtomValue(myAtom)
+    const mutateMyAtomCallback = useSetAtom(mutateMyAtom)
+    
+    return {
+        myAtomValue,
+        mutateMyAtomCallback
+    }
+}
+
+// In component
+const { myAtomValue, mutateMyAtomCallback } = useMyState()`}
+                </CodeBlock>
+              </div>
+            </div>
+
+            <div className="bg-primary/5 p-4 rounded-lg border border-primary/20">
+              <p className="text-sm">
+                <strong>Why this matters:</strong> Direct usage allows React to optimize subscriptions more effectively 
+                and makes it clearer which atoms each component actually depends on.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
         <Card className="bg-gradient-to-r from-secondary/30 to-secondary/10 border-secondary">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">

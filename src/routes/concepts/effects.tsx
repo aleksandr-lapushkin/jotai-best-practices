@@ -235,68 +235,6 @@ const App = () => {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <span className="text-2xl">📊</span>
-              Advanced Example: Analytics Tracking
-            </CardTitle>
-            <CardDescription>
-              Using effects for side-effects like analytics and logging
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <CodeBlock language="typescript">
-{`const userActionsAtom = atom<UserAction[]>([])
-const currentPageAtom = atom<string>('/')
-const userPreferencesAtom = atom<UserPreferences | null>(null)
-
-// Track user actions for analytics
-const analyticsEffectAtom = atomEffect((get, set) => {
-    const actions = get(userActionsAtom)
-    const currentPage = get(currentPageAtom)
-    const preferences = get(userPreferencesAtom)
-    
-    // Only track if user has consented
-    if (preferences?.analyticsConsent) {
-        const latestAction = actions[actions.length - 1]
-        if (latestAction) {
-            analytics.track('user_action', {
-                action: latestAction.type,
-                page: currentPage,
-                timestamp: latestAction.timestamp,
-                userId: preferences.userId
-            })
-        }
-    }
-})
-
-// Auto-sync with localStorage
-const localStorageEffectAtom = atomEffect((get, set) => {
-    const preferences = get(userPreferencesAtom)
-    
-    if (preferences) {
-        localStorage.setItem('userPreferences', JSON.stringify(preferences))
-    }
-})
-
-// Combined effect atom that mounts all effects
-const appEffectsAtom = atom((get) => {
-    get(analyticsEffectAtom)
-    get(localStorageEffectAtom)
-    return null
-})
-
-// Mount all effects in your app root
-const App = () => {
-    useAtomValue(appEffectsAtom)
-    
-    return <Router>...</Router>
-}`}
-            </CodeBlock>
-          </CardContent>
-        </Card>
-
         <Card className="bg-gradient-to-r from-secondary/30 to-secondary/10 border-secondary">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">

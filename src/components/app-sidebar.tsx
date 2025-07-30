@@ -112,33 +112,7 @@ const data: NavData = {
           url: "/advanced/testing",
         },
       ],
-    },
-    {
-      title: "Examples",
-      url: "/examples",
-      items: [
-        {
-          title: "Basic Counter",
-          url: "/examples/basic-counter",
-        },
-        {
-          title: "Action Atoms",
-          url: "/examples/action-atoms",
-        },
-        {
-          title: "Async Data Fetching",
-          url: "/examples/async-data",
-        },
-        {
-          title: "Form Management",
-          url: "/examples/form-management",
-        },
-        {
-          title: "State Persistence",
-          url: "/examples/persistence",
-        },
-      ],
-    },
+    }
   ],
 }
 
