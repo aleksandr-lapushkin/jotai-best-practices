@@ -17,10 +17,10 @@ function AtomWithQueryComponent() {
         </p>
       </div>
 
-      <Card className="bg-blue-50 border-blue-200">
+      <Card className="bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Database className="h-6 w-6 text-blue-600" />
+            <Database className="h-6 w-6 text-primary" />
             TanStack Query Integration
           </CardTitle>
         </CardHeader>
@@ -37,7 +37,7 @@ function AtomWithQueryComponent() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Zap className="h-5 w-5 text-purple-600" />
+              <Zap className="h-5 w-5 text-primary" />
               Basic atomWithSuspenseQuery
             </CardTitle>
             <CardDescription>
@@ -64,7 +64,7 @@ const derivedQueryValue = atom(async (get) => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Database className="h-5 w-5 text-green-600" />
+              <Database className="h-5 w-5 text-primary" />
               Standard atomWithQuery
             </CardTitle>
             <CardDescription>
@@ -112,7 +112,7 @@ const UserProfile = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Infinity className="h-5 w-5 text-orange-600" />
+              <Infinity className="h-5 w-5 text-primary" />
               atomWithInfiniteQuery
             </CardTitle>
             <CardDescription>
@@ -188,7 +188,7 @@ const InfinitePostList = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <RefreshCw className="h-5 w-5 text-indigo-600" />
+              <RefreshCw className="h-5 w-5 text-primary" />
               Mutations with atomWithMutation
             </CardTitle>
             <CardDescription>
@@ -276,7 +276,7 @@ const TodoApp = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-green-50 border-green-200">
+        <Card className="bg-gradient-to-r from-secondary/30 to-secondary/10 border-secondary">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <span className="text-2xl">✨</span>
@@ -284,18 +284,18 @@ const TodoApp = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-2 list-disc list-inside">
-              <li><strong>Automatic caching:</strong> Leverage TanStack Query's powerful caching system</li>
-              <li><strong>Background refetching:</strong> Keep data fresh with automatic updates</li>
-              <li><strong>Optimistic updates:</strong> Provide instant feedback with rollback on errors</li>
-              <li><strong>Suspense integration:</strong> Use React Suspense for loading states</li>
-              <li><strong>Reactive dependencies:</strong> Queries automatically refetch when atoms change</li>
-              <li><strong>Error handling:</strong> Built-in error states and retry logic</li>
+            <ul className="space-y-2 list-disc list-inside text-muted-foreground">
+              <li><strong className="text-foreground">Automatic caching:</strong> Leverage TanStack Query's powerful caching system</li>
+              <li><strong className="text-foreground">Background refetching:</strong> Keep data fresh with automatic updates</li>
+              <li><strong className="text-foreground">Optimistic updates:</strong> Provide instant feedback with rollback on errors</li>
+              <li><strong className="text-foreground">Suspense integration:</strong> Use React Suspense for loading states</li>
+              <li><strong className="text-foreground">Reactive dependencies:</strong> Queries automatically refetch when atoms change</li>
+              <li><strong className="text-foreground">Error handling:</strong> Built-in error states and retry logic</li>
             </ul>
           </CardContent>
         </Card>
 
-        <Card className="bg-gray-50 border-gray-200">
+        <Card className="bg-muted/30 border-border">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <span className="text-2xl">🚧</span>

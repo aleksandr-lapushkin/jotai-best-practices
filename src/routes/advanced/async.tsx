@@ -17,10 +17,10 @@ function AsyncComponent() {
         </p>
       </div>
 
-      <Card className="bg-amber-50 border-amber-200">
+      <Card className="bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Zap className="h-6 w-6 text-amber-600" />
+            <Zap className="h-6 w-6 text-primary" />
             Async in Jotai
           </CardTitle>
         </CardHeader>
@@ -37,7 +37,7 @@ function AsyncComponent() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Loader className="h-5 w-5 text-blue-600" />
+              <Loader className="h-5 w-5 text-primary" />
               Async Atoms with Loading States
             </CardTitle>
             <CardDescription>
@@ -103,7 +103,7 @@ const UserProfile = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <AlertCircle className="h-5 w-5 text-red-600" />
+              <AlertCircle className="h-5 w-5 text-destructive" />
               Error Boundaries with Async Atoms
             </CardTitle>
             <CardDescription>
@@ -152,7 +152,7 @@ class AsyncErrorBoundary extends React.Component {
           </CardContent>
         </Card>
 
-        <Card className="bg-gray-50 border-gray-200">
+        <Card className="bg-muted/30 border-border">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <span className="text-2xl">🚧</span>

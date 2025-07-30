@@ -17,7 +17,7 @@ function DeclaringAtomsComponent() {
         </p>
       </div>
 
-      <Card className="bg-blue-50 border-blue-200">
+      <Card className="bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <span className="text-2xl">🏗️</span>
@@ -55,8 +55,8 @@ function DeclaringAtomsComponent() {
             <div className="space-y-4">
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <CheckCircle className="h-5 w-5 text-green-600" />
-                  <span className="font-semibold text-green-700">Do ✅</span>
+                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+                  <span className="font-semibold text-green-700 dark:text-green-300">Do ✅</span>
                 </div>
                 <CodeBlock language="typescript">
 {`const currentDateAtom = atom(new Date())
@@ -70,8 +70,8 @@ const derived = atom((get) => get(currentDate))`}
 
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <XCircle className="h-5 w-5 text-red-600" />
-                  <span className="font-semibold text-red-700">Don't ❌</span>
+                  <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
+                  <span className="font-semibold text-red-700 dark:text-red-300">Don't ❌</span>
                 </div>
                 <CodeBlock language="typescript">
 {`const state = atom({currentDate: new Date(), selectedDate: null})
@@ -105,8 +105,8 @@ const derived = atom((get) => get(state).currentDate)`}
             <div className="space-y-4">
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <CheckCircle className="h-5 w-5 text-green-600" />
-                  <span className="font-semibold text-green-700">Do ✅</span>
+                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+                  <span className="font-semibold text-green-700 dark:text-green-300">Do ✅</span>
                 </div>
                 <CodeBlock language="typescript">
 {`const queryAtom = atom('hello world')
@@ -116,8 +116,8 @@ const hasQueryAtom = atom((get) => !!get(queryAtom))`}
 
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <XCircle className="h-5 w-5 text-red-600" />
-                  <span className="font-semibold text-red-700">Don't ❌</span>
+                  <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
+                  <span className="font-semibold text-red-700 dark:text-red-300">Don't ❌</span>
                 </div>
                 <CodeBlock language="typescript">
 {`const queryAtom = atom('hello world')
@@ -155,8 +155,8 @@ useEffect(() => {
             <div className="space-y-4">
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <CheckCircle className="h-5 w-5 text-green-600" />
-                  <span className="font-semibold text-green-700">Do ✅</span>
+                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+                  <span className="font-semibold text-green-700 dark:text-green-300">Do ✅</span>
                 </div>
                 <CodeBlock language="typescript">
 {`const myState = atom('test')
@@ -175,8 +175,8 @@ mutateAction({myStateValue: 'ayy', add: 2})`}
 
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <XCircle className="h-5 w-5 text-red-600" />
-                  <span className="font-semibold text-red-700">Don't ❌</span>
+                  <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
+                  <span className="font-semibold text-red-700 dark:text-red-300">Don't ❌</span>
                 </div>
                 <CodeBlock language="typescript">
 {`const [myStateValue, setMyState] = useAtom(myState)
@@ -213,8 +213,8 @@ mutateState({myStateValue: 'ayy', add: 2})`}
             <div className="space-y-4">
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <CheckCircle className="h-5 w-5 text-green-600" />
-                  <span className="font-semibold text-green-700">Do ✅</span>
+                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+                  <span className="font-semibold text-green-700 dark:text-green-300">Do ✅</span>
                 </div>
                 <CodeBlock language="typescript">
 {`const myAtom = atom("hello")
@@ -228,8 +228,8 @@ const mutateMyAtomCallback = useSetAtom(mutateMyAtom)`}
 
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <XCircle className="h-5 w-5 text-red-600" />
-                  <span className="font-semibold text-red-700">Don't ❌</span>
+                  <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
+                  <span className="font-semibold text-red-700 dark:text-red-300">Don't ❌</span>
                 </div>
                 <CodeBlock language="typescript">
 {`// Somewhere outside the component

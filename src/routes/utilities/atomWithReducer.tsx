@@ -17,10 +17,10 @@ function AtomWithReducerComponent() {
         </p>
       </div>
 
-      <Card className="bg-blue-50 border-blue-200">
+      <Card className="bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Cog className="h-6 w-6 text-blue-600" />
+            <Cog className="h-6 w-6 text-primary" />
             What is atomWithReducer?
           </CardTitle>
         </CardHeader>
@@ -84,7 +84,7 @@ const MyComponent = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-green-600" />
+              <CheckCircle className="h-5 w-5 text-primary" />
               Counter with History
             </CardTitle>
             <CardDescription>
@@ -172,7 +172,7 @@ const CounterWithHistory = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <ArrowRight className="h-5 w-5 text-purple-600" />
+              <ArrowRight className="h-5 w-5 text-primary" />
               Form State Management
             </CardTitle>
             <CardDescription>
@@ -314,7 +314,7 @@ const SignupForm = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-yellow-50 border-yellow-200">
+        <Card className="bg-gradient-to-r from-secondary/30 to-secondary/10 border-secondary">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <span className="text-2xl">💡</span>
@@ -322,18 +322,18 @@ const SignupForm = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-2 list-disc list-inside">
-              <li><strong>Complex state transitions:</strong> When state changes depend on previous values</li>
-              <li><strong>Multiple related operations:</strong> When you have many ways to modify the same state</li>
-              <li><strong>Type safety:</strong> Reducer pattern provides excellent TypeScript support</li>
-              <li><strong>Predictable updates:</strong> All state changes go through the reducer function</li>
-              <li><strong>Debugging:</strong> Easy to log and track all state changes</li>
-              <li><strong>Testing:</strong> Reducers are pure functions that are easy to test</li>
+            <ul className="space-y-2 list-disc list-inside text-muted-foreground">
+              <li><strong className="text-foreground">Complex state transitions:</strong> When state changes depend on previous values</li>
+              <li><strong className="text-foreground">Multiple related operations:</strong> When you have many ways to modify the same state</li>
+              <li><strong className="text-foreground">Type safety:</strong> Reducer pattern provides excellent TypeScript support</li>
+              <li><strong className="text-foreground">Predictable updates:</strong> All state changes go through the reducer function</li>
+              <li><strong className="text-foreground">Debugging:</strong> Easy to log and track all state changes</li>
+              <li><strong className="text-foreground">Testing:</strong> Reducers are pure functions that are easy to test</li>
             </ul>
           </CardContent>
         </Card>
 
-        <Card className="bg-gray-50 border-gray-200">
+        <Card className="bg-muted/30 border-border">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <span className="text-2xl">🚧</span>

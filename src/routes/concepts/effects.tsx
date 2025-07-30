@@ -17,10 +17,10 @@ function EffectsComponent() {
         </p>
       </div>
 
-      <Card className="bg-blue-50 border-blue-200">
+      <Card className="bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Workflow className="h-6 w-6 text-blue-600" />
+            <Workflow className="h-6 w-6 text-primary" />
             What are Effects?
           </CardTitle>
         </CardHeader>
@@ -37,7 +37,7 @@ function EffectsComponent() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Eye className="h-5 w-5 text-purple-600" />
+              <Eye className="h-5 w-5 text-primary" />
               Global Effects with `observe`
             </CardTitle>
             <CardDescription>
@@ -58,8 +58,8 @@ function EffectsComponent() {
 }, store)`}
             </CodeBlock>
             
-            <div className="bg-purple-50 border-l-4 border-purple-400 p-4">
-              <p className="text-sm text-purple-800">
+            <div className="bg-primary/10 border-l-4 border-primary p-4">
+              <p className="text-sm text-primary-foreground">
                 <strong>Note:</strong> Global effects are tied to a specific store and run automatically 
                 when any of the atoms they depend on change.
               </p>
@@ -70,7 +70,7 @@ function EffectsComponent() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Zap className="h-5 w-5 text-orange-600" />
+              <Zap className="h-5 w-5 text-primary" />
               Effect Atoms with `atomEffect`
             </CardTitle>
             <CardDescription>
@@ -98,8 +98,8 @@ const RootComponent = () => {
 }`}
             </CodeBlock>
             
-            <div className="bg-orange-50 border-l-4 border-orange-400 p-4">
-              <p className="text-sm text-orange-800">
+            <div className="bg-primary/10 border-l-4 border-primary p-4">
+              <p className="text-sm text-primary-foreground">
                 <strong>Important:</strong> Effect atoms only run when they are mounted via 
                 <code className="bg-muted px-1 rounded mx-1">useAtomValue</code> or similar hooks.
               </p>
@@ -110,7 +110,7 @@ const RootComponent = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Target className="h-5 w-5 text-green-600" />
+              <Target className="h-5 w-5 text-primary" />
               Targeted Effects with `withAtomEffect`
             </CardTitle>
             <CardDescription>
@@ -134,8 +134,8 @@ const RootComponent = () => {
 useAtomValue(myAtom)`}
             </CodeBlock>
             
-            <div className="bg-green-50 border-l-4 border-green-400 p-4">
-              <p className="text-sm text-green-800">
+            <div className="bg-primary/10 border-l-4 border-primary p-4">
+              <p className="text-sm text-primary-foreground">
                 <strong>Benefit:</strong> The effect is automatically active whenever the target atom 
                 is in use, providing seamless integration.
               </p>
@@ -146,7 +146,7 @@ useAtomValue(myAtom)`}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Lightbulb className="h-5 w-5 text-yellow-600" />
+              <Lightbulb className="h-5 w-5 text-primary" />
               Auto-Mounting Effects Trick
             </CardTitle>
             <CardDescription>
@@ -173,8 +173,8 @@ const myPublicAtom = atom(get => {
 })`}
             </CodeBlock>
             
-            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
-              <p className="text-sm text-yellow-800">
+            <div className="bg-primary/10 border-l-4 border-primary p-4">
+              <p className="text-sm text-primary-foreground">
                 <strong>Pattern:</strong> This pattern ensures effects are active whenever the main atom 
                 is in use, without requiring consumers to know about the effect.
               </p>
@@ -288,7 +288,7 @@ const App = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-indigo-50 border-indigo-200">
+        <Card className="bg-gradient-to-r from-secondary/30 to-secondary/10 border-secondary">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <span className="text-2xl">⚡</span>
@@ -296,19 +296,19 @@ const App = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-2 list-disc list-inside">
-              <li><strong>Use sparingly:</strong> Effects are powerful but can make state flow harder to follow</li>
-              <li><strong>Keep effects focused:</strong> Each effect should have a single, clear responsibility</li>
-              <li><strong>Avoid effect chains:</strong> Be careful not to create cascading effects that are hard to debug</li>
-              <li><strong>Consider performance:</strong> Effects run on every state change of their dependencies</li>
-              <li><strong>Handle cleanup:</strong> Use cleanup functions for subscriptions and timers</li>
-              <li><strong>Test effects:</strong> Mock stores make effect testing straightforward</li>
-              <li><strong>Document side-effects:</strong> Make it clear when atoms have effects attached</li>
+            <ul className="space-y-2 list-disc list-inside text-muted-foreground">
+              <li><strong className="text-foreground">Use sparingly:</strong> Effects are powerful but can make state flow harder to follow</li>
+              <li><strong className="text-foreground">Keep effects focused:</strong> Each effect should have a single, clear responsibility</li>
+              <li><strong className="text-foreground">Avoid effect chains:</strong> Be careful not to create cascading effects that are hard to debug</li>
+              <li><strong className="text-foreground">Consider performance:</strong> Effects run on every state change of their dependencies</li>
+              <li><strong className="text-foreground">Handle cleanup:</strong> Use cleanup functions for subscriptions and timers</li>
+              <li><strong className="text-foreground">Test effects:</strong> Mock stores make effect testing straightforward</li>
+              <li><strong className="text-foreground">Document side-effects:</strong> Make it clear when atoms have effects attached</li>
             </ul>
           </CardContent>
         </Card>
 
-        <Card className="bg-amber-50 border-amber-200">
+        <Card className="bg-gradient-to-r from-accent/30 to-accent/10 border-accent">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <span className="text-2xl">🎯</span>
@@ -316,13 +316,13 @@ const App = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-2 list-disc list-inside">
-              <li><strong>Analytics and tracking:</strong> Log user interactions and state changes</li>
-              <li><strong>Data synchronization:</strong> Keep different state systems in sync</li>
-              <li><strong>Side-effects:</strong> Update localStorage, send notifications, etc.</li>
-              <li><strong>Cleanup operations:</strong> Cancel requests, clear timers when state changes</li>
-              <li><strong>External integrations:</strong> Update third-party libraries when state changes</li>
-              <li><strong>Development tools:</strong> Debugging and development-time logging</li>
+            <ul className="space-y-2 list-disc list-inside text-muted-foreground">
+              <li><strong className="text-foreground">Analytics and tracking:</strong> Log user interactions and state changes</li>
+              <li><strong className="text-foreground">Data synchronization:</strong> Keep different state systems in sync</li>
+              <li><strong className="text-foreground">Side-effects:</strong> Update localStorage, send notifications, etc.</li>
+              <li><strong className="text-foreground">Cleanup operations:</strong> Cancel requests, clear timers when state changes</li>
+              <li><strong className="text-foreground">External integrations:</strong> Update third-party libraries when state changes</li>
+              <li><strong className="text-foreground">Development tools:</strong> Debugging and development-time logging</li>
             </ul>
           </CardContent>
         </Card>

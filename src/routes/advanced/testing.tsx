@@ -17,10 +17,10 @@ function TestingComponent() {
         </p>
       </div>
 
-      <Card className="bg-green-50 border-green-200">
+      <Card className="bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <TestTube className="h-6 w-6 text-green-600" />
+            <TestTube className="h-6 w-6 text-primary" />
             Testing Philosophy
           </CardTitle>
         </CardHeader>
@@ -37,7 +37,7 @@ function TestingComponent() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-blue-600" />
+              <CheckCircle className="h-5 w-5 text-primary" />
               Testing Atoms in Isolation
             </CardTitle>
             <CardDescription>
@@ -90,7 +90,7 @@ describe('Counter atoms', () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Target className="h-5 w-5 text-purple-600" />
+              <Target className="h-5 w-5 text-primary" />
               Testing Components with Atoms
             </CardTitle>
             <CardDescription>
@@ -159,7 +159,7 @@ describe('Counter component', () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-gray-50 border-gray-200">
+        <Card className="bg-muted/30 border-border">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <span className="text-2xl">🚧</span>

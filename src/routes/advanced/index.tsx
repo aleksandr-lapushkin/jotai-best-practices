@@ -1,6 +1,7 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowRight, Zap, TestTube } from 'lucide-react'
+import { createFileRoute } from '@tanstack/react-router'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { SectionCard } from '@/components/ui/section-card'
+import { Zap, TestTube } from 'lucide-react'
 
 export const Route = createFileRoute('/advanced/')({
   component: AdvancedIndexComponent,
@@ -43,59 +44,37 @@ function AdvancedIndexComponent() {
         </p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        {topics.map((topic) => {
-          const IconComponent = topic.icon
-          return (
-            <Card key={topic.title} className="group hover:shadow-md transition-shadow">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="p-2 bg-primary/10 rounded-lg">
-                    <IconComponent className="h-5 w-5 text-primary" />
-                  </div>
-                  {topic.title}
-                </CardTitle>
-                <CardDescription>
-                  {topic.description}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  {topic.topics.map((item, index) => (
-                    <li key={index} className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 bg-primary rounded-full" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-                <Link 
-                  to={topic.url}
-                  className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors font-medium text-sm"
-                >
-                  Learn more
-                  <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                </Link>
-              </CardContent>
-            </Card>
-          )
-        })}
-      </div>
-
-      <Card className="bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200">
+      <Card className="bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <span className="text-2xl">🚀</span>
-            Production Ready
+            Production Ready Patterns
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <p className="text-lg">
             These advanced topics cover the patterns and practices you'll need for building 
             robust, production-ready applications with Jotai. Master these concepts to handle 
             complex state management scenarios with confidence.
           </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div className="bg-card p-4 rounded-lg border border-border">
+              <div className="font-semibold text-primary mb-2">⚡ Performance</div>
+              <p className="text-muted-foreground">Advanced patterns for optimal performance in large applications.</p>
+            </div>
+            <div className="bg-card p-4 rounded-lg border border-border">
+              <div className="font-semibold text-primary mb-2">🧪 Quality</div>
+              <p className="text-muted-foreground">Testing strategies and patterns for reliable state management.</p>
+            </div>
+          </div>
         </CardContent>
       </Card>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        {topics.map((topic) => (
+          <SectionCard key={topic.title} {...topic} />
+        ))}
+      </div>
     </div>
   )
 }

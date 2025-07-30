@@ -1,6 +1,7 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowRight, Atom, Zap, Share, Workflow } from 'lucide-react'
+import { createFileRoute } from '@tanstack/react-router'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { SectionCard } from '@/components/ui/section-card'
+import { Atom, Zap, Share, Workflow } from 'lucide-react'
 
 export const Route = createFileRoute('/concepts/')({
   component: ConceptsIndexComponent,
@@ -67,59 +68,41 @@ function ConceptsIndexComponent() {
         </p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        {concepts.map((concept) => {
-          const IconComponent = concept.icon
-          return (
-            <Card key={concept.title} className="group hover:shadow-md transition-shadow">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className="p-2 bg-primary/10 rounded-lg">
-                    <IconComponent className="h-5 w-5 text-primary" />
-                  </div>
-                  {concept.title}
-                </CardTitle>
-                <CardDescription>
-                  {concept.description}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  {concept.topics.map((topic, index) => (
-                    <li key={index} className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 bg-primary rounded-full" />
-                      {topic}
-                    </li>
-                  ))}
-                </ul>
-                <Link 
-                  to={concept.url}
-                  className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors font-medium text-sm"
-                >
-                  Learn more
-                  <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                </Link>
-              </CardContent>
-            </Card>
-          )
-        })}
-      </div>
-
-      <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+      <Card className="bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <span className="text-2xl">💡</span>
-            Key Principle
+            <span className="text-2xl">⚛️</span>
+            Atomic Composability
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <p className="text-lg">
             The core philosophy of Jotai is <strong>atomic composability</strong>. Start with small, 
             focused atoms and compose them into more complex state. This approach leads to better 
             performance, easier testing, and more maintainable code.
           </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+            <div className="bg-card p-4 rounded-lg border border-border">
+              <div className="font-semibold text-primary mb-2">🔬 Small & Focused</div>
+              <p className="text-muted-foreground">Each atom represents a single piece of state with a clear purpose.</p>
+            </div>
+            <div className="bg-card p-4 rounded-lg border border-border">
+              <div className="font-semibold text-primary mb-2">🧩 Composable</div>
+              <p className="text-muted-foreground">Combine atoms to create complex state relationships and derived values.</p>
+            </div>
+            <div className="bg-card p-4 rounded-lg border border-border">
+              <div className="font-semibold text-primary mb-2">⚡ Performant</div>
+              <p className="text-muted-foreground">Components only re-render when atoms they actually use change.</p>
+            </div>
+          </div>
         </CardContent>
       </Card>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        {concepts.map((concept) => (
+          <SectionCard key={concept.title} {...concept} />
+        ))}
+      </div>
     </div>
   )
 }

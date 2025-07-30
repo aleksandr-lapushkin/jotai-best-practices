@@ -17,10 +17,10 @@ function AtomFamilyComponent() {
         </p>
       </div>
 
-      <Card className="bg-blue-50 border-blue-200">
+      <Card className="bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Users className="h-6 w-6 text-blue-600" />
+            <Users className="h-6 w-6 text-primary" />
             What is atomFamily?
           </CardTitle>
         </CardHeader>
@@ -73,7 +73,7 @@ const MyComponent = ({messageId}: {messageId: string}) => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Hash className="h-5 w-5 text-green-600" />
+              <Hash className="h-5 w-5 text-primary" />
               Complex Parameters
             </CardTitle>
             <CardDescription>
@@ -128,7 +128,7 @@ const TodoList = ({ userId }: { userId: string }) => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Trash2 className="h-5 w-5 text-red-600" />
+              <Trash2 className="h-5 w-5 text-destructive" />
               Memory Management
             </CardTitle>
             <CardDescription>
@@ -164,8 +164,8 @@ const cleanupUnusedAtoms = atom(null, (get, set, activeIds: string[]) => {
 })`}
             </CodeBlock>
             
-            <div className="bg-red-50 border-l-4 border-red-400 p-4">
-              <p className="text-sm text-red-800">
+            <div className="bg-destructive/10 border-l-4 border-destructive p-4">
+              <p className="text-sm text-destructive-foreground">
                 <strong>Memory Leak Warning:</strong> Without proper cleanup, atomFamily can cause 
                 memory leaks in applications with dynamic keys. Always remove atoms that are no longer needed.
               </p>
@@ -259,7 +259,7 @@ const removeCartItemAtom = atom(null, (get, set, itemId: string) => {
           </CardContent>
         </Card>
 
-        <Card className="bg-green-50 border-green-200">
+        <Card className="bg-gradient-to-r from-secondary/30 to-secondary/10 border-secondary">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <span className="text-2xl">✨</span>
@@ -267,13 +267,13 @@ const removeCartItemAtom = atom(null, (get, set, itemId: string) => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-2 list-disc list-inside">
-              <li><strong>Use stable keys:</strong> Ensure your parameter objects have consistent serialization</li>
-              <li><strong>Clean up unused atoms:</strong> Remove atoms when their data is no longer needed</li>
-              <li><strong>Consider memory usage:</strong> Monitor atom family size in large applications</li>
-              <li><strong>Type your parameters:</strong> Use TypeScript interfaces for complex parameter objects</li>
-              <li><strong>Combine with other patterns:</strong> atomFamily works well with action atoms and effects</li>
-              <li><strong>Debug with getParams():</strong> Use the getParams method to inspect current keys</li>
+            <ul className="space-y-2 list-disc list-inside text-muted-foreground">
+              <li><strong className="text-foreground">Use stable keys:</strong> Ensure your parameter objects have consistent serialization</li>
+              <li><strong className="text-foreground">Clean up unused atoms:</strong> Remove atoms when their data is no longer needed</li>
+              <li><strong className="text-foreground">Consider memory usage:</strong> Monitor atom family size in large applications</li>
+              <li><strong className="text-foreground">Type your parameters:</strong> Use TypeScript interfaces for complex parameter objects</li>
+              <li><strong className="text-foreground">Combine with other patterns:</strong> atomFamily works well with action atoms and effects</li>
+              <li><strong className="text-foreground">Debug with getParams():</strong> Use the getParams method to inspect current keys</li>
             </ul>
           </CardContent>
         </Card>

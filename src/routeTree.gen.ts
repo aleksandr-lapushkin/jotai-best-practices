@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UtilitiesIndexRouteImport } from './routes/utilities/index'
+import { Route as OverviewIndexRouteImport } from './routes/overview/index'
 import { Route as ExamplesIndexRouteImport } from './routes/examples/index'
 import { Route as ConceptsIndexRouteImport } from './routes/concepts/index'
 import { Route as AdvancedIndexRouteImport } from './routes/advanced/index'
@@ -40,6 +41,11 @@ const IndexRoute = IndexRouteImport.update({
 const UtilitiesIndexRoute = UtilitiesIndexRouteImport.update({
   id: '/utilities/',
   path: '/utilities/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OverviewIndexRoute = OverviewIndexRouteImport.update({
+  id: '/overview/',
+  path: '/overview/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExamplesIndexRoute = ExamplesIndexRouteImport.update({
@@ -167,6 +173,7 @@ export interface FileRoutesByFullPath {
   '/advanced': typeof AdvancedIndexRoute
   '/concepts': typeof ConceptsIndexRoute
   '/examples': typeof ExamplesIndexRoute
+  '/overview': typeof OverviewIndexRoute
   '/utilities': typeof UtilitiesIndexRoute
 }
 export interface FileRoutesByTo {
@@ -191,6 +198,7 @@ export interface FileRoutesByTo {
   '/advanced': typeof AdvancedIndexRoute
   '/concepts': typeof ConceptsIndexRoute
   '/examples': typeof ExamplesIndexRoute
+  '/overview': typeof OverviewIndexRoute
   '/utilities': typeof UtilitiesIndexRoute
 }
 export interface FileRoutesById {
@@ -216,6 +224,7 @@ export interface FileRoutesById {
   '/advanced/': typeof AdvancedIndexRoute
   '/concepts/': typeof ConceptsIndexRoute
   '/examples/': typeof ExamplesIndexRoute
+  '/overview/': typeof OverviewIndexRoute
   '/utilities/': typeof UtilitiesIndexRoute
 }
 export interface FileRouteTypes {
@@ -242,6 +251,7 @@ export interface FileRouteTypes {
     | '/advanced'
     | '/concepts'
     | '/examples'
+    | '/overview'
     | '/utilities'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -266,6 +276,7 @@ export interface FileRouteTypes {
     | '/advanced'
     | '/concepts'
     | '/examples'
+    | '/overview'
     | '/utilities'
   id:
     | '__root__'
@@ -290,6 +301,7 @@ export interface FileRouteTypes {
     | '/advanced/'
     | '/concepts/'
     | '/examples/'
+    | '/overview/'
     | '/utilities/'
   fileRoutesById: FileRoutesById
 }
@@ -315,6 +327,7 @@ export interface RootRouteChildren {
   AdvancedIndexRoute: typeof AdvancedIndexRoute
   ConceptsIndexRoute: typeof ConceptsIndexRoute
   ExamplesIndexRoute: typeof ExamplesIndexRoute
+  OverviewIndexRoute: typeof OverviewIndexRoute
   UtilitiesIndexRoute: typeof UtilitiesIndexRoute
 }
 
@@ -332,6 +345,13 @@ declare module '@tanstack/react-router' {
       path: '/utilities'
       fullPath: '/utilities'
       preLoaderRoute: typeof UtilitiesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/overview/': {
+      id: '/overview/'
+      path: '/overview'
+      fullPath: '/overview'
+      preLoaderRoute: typeof OverviewIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/examples/': {
@@ -499,6 +519,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdvancedIndexRoute: AdvancedIndexRoute,
   ConceptsIndexRoute: ConceptsIndexRoute,
   ExamplesIndexRoute: ExamplesIndexRoute,
+  OverviewIndexRoute: OverviewIndexRoute,
   UtilitiesIndexRoute: UtilitiesIndexRoute,
 }
 export const routeTree = rootRouteImport

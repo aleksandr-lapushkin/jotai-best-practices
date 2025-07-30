@@ -17,10 +17,10 @@ function AtomWithDefaultComponent() {
         </p>
       </div>
 
-      <Card className="bg-blue-50 border-blue-200">
+      <Card className="bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <RefreshCw className="h-6 w-6 text-blue-600" />
+            <RefreshCw className="h-6 w-6 text-primary" />
             Overview
           </CardTitle>
         </CardHeader>
@@ -62,7 +62,7 @@ const resetState = atom(null, (get, set) => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Clock className="h-5 w-5 text-green-600" />
+              <Clock className="h-5 w-5 text-primary" />
               Async Default Values
             </CardTitle>
             <CardDescription>
@@ -96,7 +96,7 @@ const defaultFromSuspendingAsync = atomWithDefault(async () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Zap className="h-5 w-5 text-purple-600" />
+              <Zap className="h-5 w-5 text-primary" />
               Real-World Example: User Settings
             </CardTitle>
             <CardDescription>
@@ -160,7 +160,7 @@ const Settings = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-yellow-50 border-yellow-200">
+        <Card className="bg-gradient-to-r from-secondary/30 to-secondary/10 border-secondary">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <span className="text-2xl">💡</span>
@@ -168,17 +168,17 @@ const Settings = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-2 list-disc list-inside">
-              <li><strong>Lazy initialization:</strong> Default values are computed only when needed</li>
-              <li><strong>Async support:</strong> Can fetch default values from APIs or async operations</li>
-              <li><strong>Reset capability:</strong> Easy way to restore original state</li>
-              <li><strong>Dependency integration:</strong> Default computation can depend on other atoms</li>
-              <li><strong>Error handling:</strong> Graceful fallbacks when default computation fails</li>
+            <ul className="space-y-2 list-disc list-inside text-muted-foreground">
+              <li><strong className="text-foreground">Lazy initialization:</strong> Default values are computed only when needed</li>
+              <li><strong className="text-foreground">Async support:</strong> Can fetch default values from APIs or async operations</li>
+              <li><strong className="text-foreground">Reset capability:</strong> Easy way to restore original state</li>
+              <li><strong className="text-foreground">Dependency integration:</strong> Default computation can depend on other atoms</li>
+              <li><strong className="text-foreground">Error handling:</strong> Graceful fallbacks when default computation fails</li>
             </ul>
           </CardContent>
         </Card>
 
-        <Card className="bg-gray-50 border-gray-200">
+        <Card className="bg-muted/30 border-border">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <span className="text-2xl">🚧</span>

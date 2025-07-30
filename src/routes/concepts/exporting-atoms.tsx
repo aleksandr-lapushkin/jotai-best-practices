@@ -17,10 +17,10 @@ function ExportingAtomsComponent() {
         </p>
       </div>
 
-      <Card className="bg-red-50 border-red-200">
+      <Card className="bg-gradient-to-r from-destructive/5 to-destructive/10 border-destructive/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <AlertTriangle className="h-6 w-6 text-red-600" />
+            <AlertTriangle className="h-6 w-6 text-destructive" />
             The Problem with Direct Atom Exports
           </CardTitle>
         </CardHeader>
@@ -37,7 +37,7 @@ function ExportingAtomsComponent() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <XCircle className="h-5 w-5 text-red-600" />
+              <XCircle className="h-5 w-5 text-destructive" />
               Problematic Pattern
             </CardTitle>
             <CardDescription>
@@ -74,8 +74,8 @@ const MyComponent = () => {
 }`}
             </CodeBlock>
             
-            <div className="bg-red-50 border-l-4 border-red-400 p-4">
-              <p className="text-sm text-red-800">
+            <div className="bg-destructive/10 border-l-4 border-destructive p-4">
+              <p className="text-sm text-destructive-foreground">
                 <strong>Issues:</strong> Page can go negative, exceed maximum pages, or be set to invalid values. 
                 No validation or business logic enforcement.
               </p>
@@ -86,7 +86,7 @@ const MyComponent = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-green-600" />
+              <CheckCircle className="h-5 w-5 text-primary" />
               Solution 1: Controlled Write API
             </CardTitle>
             <CardDescription>
@@ -142,7 +142,7 @@ const MyComponent = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Share className="h-5 w-5 text-blue-600" />
+              <Share className="h-5 w-5 text-primary" />
               Solution 2: Action Atom Approach
             </CardTitle>
             <CardDescription>
@@ -192,7 +192,7 @@ const MyComponent = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Lock className="h-5 w-5 text-purple-600" />
+              <Lock className="h-5 w-5 text-primary" />
               Cross-Domain Read-Only Access
             </CardTitle>
             <CardDescription>
@@ -208,8 +208,8 @@ const MyComponent = () => {
             <div className="space-y-4">
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <CheckCircle className="h-5 w-5 text-green-600" />
-                  <span className="font-semibold text-green-700">Do ✅</span>
+                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+                  <span className="font-semibold text-green-700 dark:text-green-300">Do ✅</span>
                 </div>
                 <CodeBlock language="typescript">
 {`const currentDateAtom = atom(new Date())
@@ -223,8 +223,8 @@ export const Atoms = {
 
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <XCircle className="h-5 w-5 text-red-600" />
-                  <span className="font-semibold text-red-700">Don't ❌</span>
+                  <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
+                  <span className="font-semibold text-red-700 dark:text-red-300">Don't ❌</span>
                 </div>
                 <CodeBlock language="typescript">
 {`export const currentDateAtom = atom(new Date())`}
@@ -237,7 +237,7 @@ export const Atoms = {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Shield className="h-5 w-5 text-indigo-600" />
+              <Shield className="h-5 w-5 text-primary" />
               Complex Example: User Preferences
             </CardTitle>
             <CardDescription>
@@ -313,7 +313,7 @@ export const updatePreferencesAtom = atom(null, (get, set, updates: Partial<User
           </CardContent>
         </Card>
 
-        <Card className="bg-green-50 border-green-200">
+        <Card className="bg-gradient-to-r from-secondary/30 to-secondary/10 border-secondary">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <span className="text-2xl">✨</span>
@@ -321,13 +321,13 @@ export const updatePreferencesAtom = atom(null, (get, set, updates: Partial<User
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-2 list-disc list-inside">
-              <li><strong>Never export writable atoms directly</strong> across domain boundaries</li>
-              <li><strong>Use read-only atom wrappers</strong> for cross-domain data access</li>
-              <li><strong>Expose specific action atoms</strong> with built-in validation</li>
-              <li><strong>Create controlled write APIs</strong> that enforce business rules</li>
-              <li><strong>Minimize atom mutations</strong> across domain boundaries</li>
-              <li><strong>Co-locate validation logic</strong> with the atoms that need it</li>
+            <ul className="space-y-2 list-disc list-inside text-muted-foreground">
+              <li><strong className="text-foreground">Never export writable atoms directly</strong> across domain boundaries</li>
+              <li><strong className="text-foreground">Use read-only atom wrappers</strong> for cross-domain data access</li>
+              <li><strong className="text-foreground">Expose specific action atoms</strong> with built-in validation</li>
+              <li><strong className="text-foreground">Create controlled write APIs</strong> that enforce business rules</li>
+              <li><strong className="text-foreground">Minimize atom mutations</strong> across domain boundaries</li>
+              <li><strong className="text-foreground">Co-locate validation logic</strong> with the atoms that need it</li>
             </ul>
           </CardContent>
         </Card>

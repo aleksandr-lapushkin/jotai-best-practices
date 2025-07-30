@@ -17,10 +17,10 @@ function ActionAtomsComponent() {
         </p>
       </div>
 
-      <Card className="bg-purple-50 border-purple-200">
+      <Card className="bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Zap className="h-6 w-6 text-purple-600" />
+            <Zap className="h-6 w-6 text-primary" />
             What are Action Atoms?
           </CardTitle>
         </CardHeader>
@@ -37,7 +37,7 @@ function ActionAtomsComponent() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Code className="h-5 w-5 text-blue-600" />
+              <Code className="h-5 w-5 text-primary" />
               Action Without Payload
             </CardTitle>
             <CardDescription>
@@ -69,7 +69,7 @@ doCapitalise()`}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <GitBranch className="h-5 w-5 text-green-600" />
+              <GitBranch className="h-5 w-5 text-primary" />
               Action With Payload
             </CardTitle>
             <CardDescription>
@@ -99,7 +99,7 @@ doReplace("test")`}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <GitBranch className="h-5 w-5 text-orange-600" />
+              <GitBranch className="h-5 w-5 text-primary" />
               Composing Action Atoms
             </CardTitle>
             <CardDescription>
@@ -135,7 +135,7 @@ const replaceAndCapitalise = atom(null, (get, set, payload: string) => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Clock className="h-5 w-5 text-indigo-600" />
+              <Clock className="h-5 w-5 text-primary" />
               Async Action Atoms
             </CardTitle>
             <CardDescription>
@@ -239,7 +239,7 @@ const clearUserAction = atom(null, (get, set) => {
           </CardContent>
         </Card>
 
-        <Card className="bg-yellow-50 border-yellow-200">
+        <Card className="bg-gradient-to-r from-secondary/30 to-secondary/10 border-secondary">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <span className="text-2xl">💡</span>
@@ -247,13 +247,13 @@ const clearUserAction = atom(null, (get, set) => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-2 list-disc list-inside">
-              <li><strong>Co-location:</strong> Business logic lives next to the state it modifies</li>
-              <li><strong>Atomic updates:</strong> Multiple state changes happen in a single operation</li>
-              <li><strong>Type safety:</strong> Full TypeScript support for payloads and return types</li>
-              <li><strong>Composability:</strong> Action atoms can call other action atoms</li>
-              <li><strong>Async support:</strong> Built-in support for promises and async operations</li>
-              <li><strong>Testability:</strong> Easy to test in isolation with mock stores</li>
+            <ul className="space-y-2 list-disc list-inside text-muted-foreground">
+              <li><strong className="text-foreground">Co-location:</strong> Business logic lives next to the state it modifies</li>
+              <li><strong className="text-foreground">Atomic updates:</strong> Multiple state changes happen in a single operation</li>
+              <li><strong className="text-foreground">Type safety:</strong> Full TypeScript support for payloads and return types</li>
+              <li><strong className="text-foreground">Composability:</strong> Action atoms can call other action atoms</li>
+              <li><strong className="text-foreground">Async support:</strong> Built-in support for promises and async operations</li>
+              <li><strong className="text-foreground">Testability:</strong> Easy to test in isolation with mock stores</li>
             </ul>
           </CardContent>
         </Card>
