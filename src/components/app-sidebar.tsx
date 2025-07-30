@@ -37,11 +37,11 @@ const data = {
       url: "/concepts",
       items: [
         {
-          title: "Declaring and structuring atoms",
+          title: "Structuring atoms",
           url: "/concepts/declaring-atoms",
         },
         {
-          title: "Action atoms & atom mutations",
+          title: "Action atoms",
           url: "/concepts/action-atoms",
         },
         {
@@ -59,20 +59,20 @@ const data = {
       url: "/utilities",
       items: [
         {
-          title: "atomWithDefault & atomWithReset",
-          url: "/utilities/with-default-reset",
+          title: "atomWithDefault",
+          url: "/utilities/atomWithDefault",
         },
         {
           title: "atomFamily",
-          url: "/utilities/atom-family",
+          url: "/utilities/atomFamily",
         },
         {
           title: "atomWithReducer",
-          url: "/utilities/with-reducer",
+          url: "/utilities/atomWithReducer",
         },
         {
           title: "atomWithQuery variants",
-          url: "/utilities/with-query",
+          url: "/utilities/atomWithQuery",
         },
       ],
     },

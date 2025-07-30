@@ -11,6 +11,13 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ExamplesIndexRouteImport } from './routes/examples/index'
+import { Route as ConceptsIndexRouteImport } from './routes/concepts/index'
+import { Route as OverviewSetupRouteImport } from './routes/overview/setup'
+import { Route as OverviewHowItWorksRouteImport } from './routes/overview/how-it-works'
+import { Route as ConceptsExportingAtomsRouteImport } from './routes/concepts/exporting-atoms'
+import { Route as ConceptsEffectsRouteImport } from './routes/concepts/effects'
+import { Route as ConceptsDeclaringAtomsRouteImport } from './routes/concepts/declaring-atoms'
+import { Route as ConceptsActionAtomsRouteImport } from './routes/concepts/action-atoms'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,30 +29,121 @@ const ExamplesIndexRoute = ExamplesIndexRouteImport.update({
   path: '/examples/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ConceptsIndexRoute = ConceptsIndexRouteImport.update({
+  id: '/concepts/',
+  path: '/concepts/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OverviewSetupRoute = OverviewSetupRouteImport.update({
+  id: '/overview/setup',
+  path: '/overview/setup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OverviewHowItWorksRoute = OverviewHowItWorksRouteImport.update({
+  id: '/overview/how-it-works',
+  path: '/overview/how-it-works',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConceptsExportingAtomsRoute = ConceptsExportingAtomsRouteImport.update({
+  id: '/concepts/exporting-atoms',
+  path: '/concepts/exporting-atoms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConceptsEffectsRoute = ConceptsEffectsRouteImport.update({
+  id: '/concepts/effects',
+  path: '/concepts/effects',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConceptsDeclaringAtomsRoute = ConceptsDeclaringAtomsRouteImport.update({
+  id: '/concepts/declaring-atoms',
+  path: '/concepts/declaring-atoms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConceptsActionAtomsRoute = ConceptsActionAtomsRouteImport.update({
+  id: '/concepts/action-atoms',
+  path: '/concepts/action-atoms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/concepts/action-atoms': typeof ConceptsActionAtomsRoute
+  '/concepts/declaring-atoms': typeof ConceptsDeclaringAtomsRoute
+  '/concepts/effects': typeof ConceptsEffectsRoute
+  '/concepts/exporting-atoms': typeof ConceptsExportingAtomsRoute
+  '/overview/how-it-works': typeof OverviewHowItWorksRoute
+  '/overview/setup': typeof OverviewSetupRoute
+  '/concepts': typeof ConceptsIndexRoute
   '/examples': typeof ExamplesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/concepts/action-atoms': typeof ConceptsActionAtomsRoute
+  '/concepts/declaring-atoms': typeof ConceptsDeclaringAtomsRoute
+  '/concepts/effects': typeof ConceptsEffectsRoute
+  '/concepts/exporting-atoms': typeof ConceptsExportingAtomsRoute
+  '/overview/how-it-works': typeof OverviewHowItWorksRoute
+  '/overview/setup': typeof OverviewSetupRoute
+  '/concepts': typeof ConceptsIndexRoute
   '/examples': typeof ExamplesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/concepts/action-atoms': typeof ConceptsActionAtomsRoute
+  '/concepts/declaring-atoms': typeof ConceptsDeclaringAtomsRoute
+  '/concepts/effects': typeof ConceptsEffectsRoute
+  '/concepts/exporting-atoms': typeof ConceptsExportingAtomsRoute
+  '/overview/how-it-works': typeof OverviewHowItWorksRoute
+  '/overview/setup': typeof OverviewSetupRoute
+  '/concepts/': typeof ConceptsIndexRoute
   '/examples/': typeof ExamplesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/examples'
+  fullPaths:
+    | '/'
+    | '/concepts/action-atoms'
+    | '/concepts/declaring-atoms'
+    | '/concepts/effects'
+    | '/concepts/exporting-atoms'
+    | '/overview/how-it-works'
+    | '/overview/setup'
+    | '/concepts'
+    | '/examples'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/examples'
-  id: '__root__' | '/' | '/examples/'
+  to:
+    | '/'
+    | '/concepts/action-atoms'
+    | '/concepts/declaring-atoms'
+    | '/concepts/effects'
+    | '/concepts/exporting-atoms'
+    | '/overview/how-it-works'
+    | '/overview/setup'
+    | '/concepts'
+    | '/examples'
+  id:
+    | '__root__'
+    | '/'
+    | '/concepts/action-atoms'
+    | '/concepts/declaring-atoms'
+    | '/concepts/effects'
+    | '/concepts/exporting-atoms'
+    | '/overview/how-it-works'
+    | '/overview/setup'
+    | '/concepts/'
+    | '/examples/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ConceptsActionAtomsRoute: typeof ConceptsActionAtomsRoute
+  ConceptsDeclaringAtomsRoute: typeof ConceptsDeclaringAtomsRoute
+  ConceptsEffectsRoute: typeof ConceptsEffectsRoute
+  ConceptsExportingAtomsRoute: typeof ConceptsExportingAtomsRoute
+  OverviewHowItWorksRoute: typeof OverviewHowItWorksRoute
+  OverviewSetupRoute: typeof OverviewSetupRoute
+  ConceptsIndexRoute: typeof ConceptsIndexRoute
   ExamplesIndexRoute: typeof ExamplesIndexRoute
 }
 
@@ -65,11 +163,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExamplesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/concepts/': {
+      id: '/concepts/'
+      path: '/concepts'
+      fullPath: '/concepts'
+      preLoaderRoute: typeof ConceptsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/overview/setup': {
+      id: '/overview/setup'
+      path: '/overview/setup'
+      fullPath: '/overview/setup'
+      preLoaderRoute: typeof OverviewSetupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/overview/how-it-works': {
+      id: '/overview/how-it-works'
+      path: '/overview/how-it-works'
+      fullPath: '/overview/how-it-works'
+      preLoaderRoute: typeof OverviewHowItWorksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/concepts/exporting-atoms': {
+      id: '/concepts/exporting-atoms'
+      path: '/concepts/exporting-atoms'
+      fullPath: '/concepts/exporting-atoms'
+      preLoaderRoute: typeof ConceptsExportingAtomsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/concepts/effects': {
+      id: '/concepts/effects'
+      path: '/concepts/effects'
+      fullPath: '/concepts/effects'
+      preLoaderRoute: typeof ConceptsEffectsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/concepts/declaring-atoms': {
+      id: '/concepts/declaring-atoms'
+      path: '/concepts/declaring-atoms'
+      fullPath: '/concepts/declaring-atoms'
+      preLoaderRoute: typeof ConceptsDeclaringAtomsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/concepts/action-atoms': {
+      id: '/concepts/action-atoms'
+      path: '/concepts/action-atoms'
+      fullPath: '/concepts/action-atoms'
+      preLoaderRoute: typeof ConceptsActionAtomsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ConceptsActionAtomsRoute: ConceptsActionAtomsRoute,
+  ConceptsDeclaringAtomsRoute: ConceptsDeclaringAtomsRoute,
+  ConceptsEffectsRoute: ConceptsEffectsRoute,
+  ConceptsExportingAtomsRoute: ConceptsExportingAtomsRoute,
+  OverviewHowItWorksRoute: OverviewHowItWorksRoute,
+  OverviewSetupRoute: OverviewSetupRoute,
+  ConceptsIndexRoute: ConceptsIndexRoute,
   ExamplesIndexRoute: ExamplesIndexRoute,
 }
 export const routeTree = rootRouteImport
