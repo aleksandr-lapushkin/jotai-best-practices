@@ -4,6 +4,7 @@ import './index.css'
 
 
 import { RouterProvider, createRouter } from '@tanstack/react-router'
+import { config } from './config'
 
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'
@@ -11,7 +12,7 @@ import { routeTree } from './routeTree.gen'
 // Create a new router instance  
 const router = createRouter({ 
   routeTree,
-  basepath: '/jotai-best-practices',
+  basepath: config.basePath,
   defaultPreload: 'intent',
   defaultPreloadStaleTime: 0,
   // Enable scroll restoration: scroll to top on new pages, restore position on back/forward

@@ -1,5 +1,6 @@
 import { useRouterState, Link } from '@tanstack/react-router'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
+import { config } from '@/config'
 
 interface BreadcrumbSegment {
   title: string
@@ -65,7 +66,13 @@ function generateBreadcrumbs(pathname: string): BreadcrumbSegment[] {
 
 export function DynamicBreadcrumb() {
   const routerState = useRouterState()
-  const pathname = routerState.location.pathname
+  const fullPathname = routerState.location.pathname
+  
+  // Strip the base path to get the router path
+  const pathname = fullPathname.startsWith(config.basePath) 
+    ? fullPathname.slice(config.basePath.length) || '/'
+    : fullPathname
+    
   const breadcrumbs = generateBreadcrumbs(pathname)
 
   return (

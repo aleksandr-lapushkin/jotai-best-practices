@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/sidebar"
 import { Link, useRouterState } from "@tanstack/react-router"
 import type { FileRouteTypes } from "@/routeTree.gen"
+import { config } from "@/config"
 
 // Type-safe route references using the generated route tree
 type RoutePath = FileRouteTypes['fullPaths']
@@ -118,7 +119,12 @@ const data: NavData = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const routerState = useRouterState()
-  const currentPath = routerState.location.pathname
+  const fullPathname = routerState.location.pathname
+  
+  // Strip the base path to get the router path
+  const currentPath = fullPathname.startsWith(config.basePath) 
+    ? fullPathname.slice(config.basePath.length) || '/'
+    : fullPathname
 
   // Helper function to check if a path is active
   const isPathActive = (path: string) => {
