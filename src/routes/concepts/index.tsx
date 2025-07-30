@@ -9,50 +9,51 @@ export const Route = createFileRoute('/concepts/')({
 
 const concepts = [
   {
-    title: "Action atoms",
-    description: "Co-locate business logic with state management",
-    url: "/concepts/action-atoms",
-    icon: Zap,
-    topics: [
-      "Action atoms",
-      "Action atom composition",
-      "Async actions",
-    ]
-  },
-  {
-    title: "Structuring atoms",
-    description: "Best practices for declaring and organizing atomic state in your application",
+    title: "Structuring Atoms",
+    description: "Essential patterns for organizing atomic state in your application",
     url: "/concepts/declaring-atoms",
     icon: Atom,
     topics: [
-      "Atom definition",
-      "Derived atoms", 
-      "Group related mutations",
-      "Control cross-domain access"
+      "Domain-based organization",
+      "Atomic granularity principles", 
+      "Derived state patterns",
+      "Avoiding state sprawl"
     ]
   },
   {
-    title: "Exporting atoms",
-    description: "Maintain control over your state by exposing narrow, specific APIs to consumers",
+    title: "Atom Composition",
+    description: "Build complex state by combining simple atoms with derived state",
+    url: "/concepts/composition",
+    icon: Workflow,
+    topics: [
+      "Derived atom patterns",
+      "Cross-atom dependencies",
+      "Performance considerations",
+      "Composition strategies"
+    ]
+  },
+  {
+    title: "Action Atoms",
+    description: "Co-locate business logic with state management using action atoms",
+    url: "/concepts/action-atoms",
+    icon: Zap,
+    topics: [
+      "Write-only atoms",
+      "Business logic encapsulation",
+      "Async action patterns",
+      "Error handling"
+    ]
+  },
+  {
+    title: "Exporting & Boundaries",
+    description: "Maintain control by exposing narrow, specific APIs to consumers",
     url: "/concepts/exporting-atoms",
     icon: Share,
     topics: [
-      "Read-only atom exports",
+      "Read-only exports",
       "Controlled mutation APIs",
-      "Cross-domain boundaries",
-      "Action atom exports"
-    ]
-  },
-  {
-    title: "Effects",
-    description: "React to state changes using effect atoms for side-effects and state synchronization",
-    url: "/concepts/effects",
-    icon: Workflow,
-    topics: [
-      "Global effects with observe",
-      "Effect atoms with atomEffect",
-      "Targeted effects with withAtomEffect",
-      "Effect mounting strategies"
+      "Domain boundaries",
+      "API design principles"
     ]
   }
 ]
@@ -63,24 +64,30 @@ function ConceptsIndexComponent() {
       <div className="space-y-4">
         <h1 className="text-4xl font-bold tracking-tight">Core Concepts</h1>
         <p className="text-xl text-muted-foreground">
-          Master the fundamental principles of effective Jotai state management
+          Master the fundamental patterns for building maintainable Jotai applications
         </p>
       </div>
 
       <Card className="bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <span className="text-2xl">⚛️</span>
-            Best Practices for keeping your Jotai state organized
+            <span className="text-2xl">🎨</span>
+            Building Maintainable State Architecture
           </CardTitle>
           <CardDescription>
-            Tips for staying productive
+            Progressive patterns from simple atoms to complex applications
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-lg">
-            Learn how to structure, organize and reuse your Jotai atoms effectively to build scalable and maintainable applications.
+            These concepts build on each other, starting with fundamental atom organization and progressing to 
+            advanced patterns for API design and cross-domain boundaries.
           </p>
+          <div className="mt-4 p-3 bg-primary/10 rounded-lg border border-primary/20">
+            <p className="text-sm text-primary font-medium">
+              💡 Tip: Work through these concepts in order - each builds on patterns from the previous sections.
+            </p>
+          </div>
           
         </CardContent>
       </Card>

@@ -1,7 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CodeBlock } from '@/components/ui/code-block'
-import { Workflow, Eye, Zap, Target, Lightbulb } from 'lucide-react'
+import { Workflow, Eye, Zap, Target, Lightbulb, ArrowRight } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/concepts/effects')({
   component: EffectsComponent,
@@ -11,9 +12,9 @@ function EffectsComponent() {
   return (
     <div className="container mx-auto px-4 py-8 space-y-8">
       <div className="space-y-4">
-        <h1 className="text-4xl font-bold tracking-tight">Effects</h1>
+        <h1 className="text-4xl font-bold tracking-tight">Effects & Side Effects</h1>
         <p className="text-xl text-muted-foreground">
-          React to state changes using effect atoms for side-effects and state synchronization
+          React to state changes with effect atoms for side-effects, analytics, and external system integration
         </p>
       </div>
 
@@ -26,9 +27,13 @@ function EffectsComponent() {
         </CardHeader>
         <CardContent>
           <p>
-            Effects in Jotai allow you to react to state changes via effect atoms. One way to think 
-            about them is they're similar to Action Atoms that are executed on state changes. Effects 
-            typically are only needed in very specific, limited scenarios, but they can be quite powerful.
+            Effects in Jotai allow you to react to state changes automatically. Think of them as 
+            <strong>action atoms that trigger on state changes</strong> rather than being called explicitly. 
+            While action atoms are imperative ("do this now"), effects are reactive ("do this whenever X changes").
+          </p>
+          <p className="mt-2">
+            Effects are the final piece of the Jotai puzzle - use them sparingly for side-effects like 
+            analytics, external system sync, and cleanup operations.
           </p>
         </CardContent>
       </Card>
@@ -58,10 +63,11 @@ function EffectsComponent() {
 }, store)`}
             </CodeBlock>
             
-            <div className="bg-primary/10 border-l-4 border-primary p-4">
-              <p className="text-sm text-primary-foreground">
-                <strong>Note:</strong> Global effects are tied to a specific store and run automatically 
-                when any of the atoms they depend on change.
+            <div className="bg-primary/5 p-4 rounded-lg border border-primary/20">
+              <p className="text-sm">
+                <strong>Key insight:</strong> Unlike action atoms that you call explicitly, global effects 
+                run automatically whenever their dependent atoms change. This is powerful but can make 
+                state flow harder to debug.
               </p>
             </div>
           </CardContent>
@@ -98,10 +104,11 @@ const RootComponent = () => {
 }`}
             </CodeBlock>
             
-            <div className="bg-primary/10 border-l-4 border-primary p-4">
-              <p className="text-sm text-primary-foreground">
-                <strong>Important:</strong> Effect atoms only run when they are mounted via 
-                <code className="bg-muted px-1 rounded mx-1">useAtomValue</code> or similar hooks.
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border border-yellow-200 dark:border-yellow-800">
+              <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                <strong>Important:</strong> Effect atoms must be explicitly mounted in a component to work. 
+                This gives you control over when effects are active, similar to how you control which 
+                atoms are exported across domain boundaries.
               </p>
             </div>
           </CardContent>
@@ -134,10 +141,11 @@ const RootComponent = () => {
 useAtomValue(myAtom)`}
             </CodeBlock>
             
-            <div className="bg-primary/10 border-l-4 border-primary p-4">
-              <p className="text-sm text-primary-foreground">
-                <strong>Benefit:</strong> The effect is automatically active whenever the target atom 
-                is in use, providing seamless integration.
+            <div className="bg-primary/5 p-4 rounded-lg border border-primary/20">
+              <p className="text-sm">
+                <strong>Best of both worlds:</strong> This approach gives you the automatic mounting of 
+                global effects with the controlled activation of effect atoms - the effect is only 
+                active when someone actually uses the atom.
               </p>
             </div>
           </CardContent>
@@ -173,10 +181,11 @@ const myPublicAtom = atom(get => {
 })`}
             </CodeBlock>
             
-            <div className="bg-primary/10 border-l-4 border-primary p-4">
-              <p className="text-sm text-primary-foreground">
-                <strong>Pattern:</strong> This pattern ensures effects are active whenever the main atom 
-                is in use, without requiring consumers to know about the effect.
+            <div className="bg-primary/5 p-4 rounded-lg border border-primary/20">
+              <p className="text-sm">
+                <strong>Encapsulation pattern:</strong> Just like how we control atom exports to maintain 
+                domain boundaries, this pattern hides the effect implementation from consumers while 
+                ensuring it works seamlessly.
               </p>
             </div>
           </CardContent>
@@ -324,6 +333,103 @@ const App = () => {
               <li><strong className="text-foreground">External integrations:</strong> Update third-party libraries when state changes</li>
               <li><strong className="text-foreground">Development tools:</strong> Debugging and development-time logging</li>
             </ul>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <span className="text-2xl">🔗</span>
+              Connecting the Concepts
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p>
+              Effects complete the Jotai best practices picture by adding reactive capabilities to your 
+              well-structured atomic state:
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <h4 className="font-semibold text-primary">Structure + Effects</h4>
+                <p className="text-sm text-muted-foreground">
+                  Use domain-based organization to keep effects focused and maintainable, just like your atoms.
+                </p>
+              </div>
+              <div className="space-y-2">
+                <h4 className="font-semibold text-primary">Composition + Effects</h4>
+                <p className="text-sm text-muted-foreground">
+                  Effects can depend on derived atoms, automatically reacting to complex state changes.
+                </p>
+              </div>
+              <div className="space-y-2">
+                <h4 className="font-semibold text-primary">Actions + Effects</h4>
+                <p className="text-sm text-muted-foreground">
+                  Action atoms handle explicit operations; effects handle automatic reactions to state changes.
+                </p>
+              </div>
+              <div className="space-y-2">
+                <h4 className="font-semibold text-primary">Boundaries + Effects</h4>
+                <p className="text-sm text-muted-foreground">
+                  Apply the same export control principles - hide effect complexity behind clean atom interfaces.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <span className="text-2xl">🎓</span>
+              You've Mastered Jotai Best Practices!
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p>
+              Congratulations! You now understand the complete toolkit for building maintainable Jotai applications:
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div className="p-3 bg-muted rounded-lg">
+                <div className="font-medium text-primary mb-1">Foundation</div>
+                <div className="text-sm text-muted-foreground">Structure atoms by domain, choose proper granularity</div>
+              </div>
+              <div className="p-3 bg-muted rounded-lg">
+                <div className="font-medium text-primary mb-1">Composition</div>
+                <div className="text-sm text-muted-foreground">Build complex state from simple, focused atoms</div>
+              </div>
+              <div className="p-3 bg-muted rounded-lg">
+                <div className="font-medium text-primary mb-1">Business Logic</div>
+                <div className="text-sm text-muted-foreground">Encapsulate operations with action atoms</div>
+              </div>
+              <div className="p-3 bg-muted rounded-lg">
+                <div className="font-medium text-primary mb-1">API Design</div>
+                <div className="text-sm text-muted-foreground">Control access with clean export boundaries</div>
+              </div>
+              <div className="p-3 bg-muted rounded-lg">
+                <div className="font-medium text-primary mb-1">Reactivity</div>
+                <div className="text-sm text-muted-foreground">Handle side-effects with targeted effects</div>
+              </div>
+            </div>
+            <p>
+              Ready to see these concepts in action? Explore the Examples section for real-world implementations, 
+              or dive into Advanced Topics for patterns like async data management and testing strategies.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 mt-4">
+              <Link 
+                to="/examples" 
+                className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
+              >
+                <span>Explore: Interactive Examples</span>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link 
+                to="/advanced" 
+                className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
+              >
+                <span>Or dive into: Advanced Topics</span>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
           </CardContent>
         </Card>
       </div>

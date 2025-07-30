@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CodeBlock } from '@/components/ui/code-block'
-import { Zap, Code as CodeIcon, GitBranch, Clock } from 'lucide-react'
-import { Code } from '@/components/ui/code'
+import { CheckCircle, XCircle, ArrowRight, AlertTriangle } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
 import { atom, useAtomValue, useSetAtom } from 'jotai'
 import { Button } from '@/components/ui/button'
 import { useState } from 'react'
@@ -11,88 +11,89 @@ export const Route = createFileRoute('/concepts/action-atoms')({
   component: ActionAtomsComponent,
 })
 
-const myAtom = atom("hello")
-const capitalise = atom(null, (_, set) => {
-  set(myAtom, (curr) => curr[0].toUpperCase() + curr.slice(1))
-})
-const replace = atom(null, (_, set, payload: string) => {
-  set(myAtom, payload)
-})
-const replaceAndCapitalise = atom(null, (_, set, payload: string) => {
-  set(replace, payload)
-  set(capitalise)
-})
-const doAsyncAction = atom(null, async () => {
-  const response = await fetch('https://jsonplaceholder.typicode.com/todos/1')
-  return response.json()
-})
-function CapitaliseExample() {
-  const doCapitalise = useSetAtom(capitalise)
-  const atomValue = useAtomValue(myAtom)
+// Example atoms for demos
+const userNameAtom = atom('John Doe')
+const userEmailAtom = atom('john@example.com')
+const isLoadingAtom = atom(false)
+const errorAtom = atom<string | null>(null)
 
-  return (
-    <div className="text-center space-y-2">
-      <p>{atomValue}</p>
-
-    <Button onClick={() => doCapitalise()} variant="outline" size="sm">
-      Capitalise
-      </Button>
-    </div>
-  )
-}
-
-function ReplaceExample() {
-  const doReplace = useSetAtom(replace)
-  const atomValue = useAtomValue(myAtom)
-
-  return (
-    <div className="text-center space-y-2">
-      <p>{atomValue}</p>
-
-      <Button onClick={() => doReplace("test")} variant="outline" size="sm">
-        Replace
-      </Button>
-    </div>
-  )
-}
-
-function ComposeExample() {
-  
-  const atomValue = useAtomValue(myAtom)
-  const doReplace = useSetAtom(replaceAndCapitalise)
-  return (
-    <div className="text-center space-y-2">
-      <p>{atomValue}</p>
-
-      <Button onClick={() => doReplace("let's do both!")} variant="outline" size="sm">
-        Do Both
-      </Button>
-    </div>
-  )
-}
-
-function AsyncActionExample() {
-  const performAsyncAction = useSetAtom(doAsyncAction)
-  const [lastResult, setLastResult] = useState('')
-
-  const handleClick = async () => {
+const updateUserAtom = atom(
+  null,
+  async (_, set, userData: { name: string; email: string }) => {
+    set(isLoadingAtom, true)
+    set(errorAtom, null)
+    
     try {
-      const result = await performAsyncAction()
-      setLastResult(JSON.stringify(result, null, 2))
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000))
       
+      set(userNameAtom, userData.name)
+      set(userEmailAtom, userData.email)
     } catch (error) {
-      console.error('Action failed:', error)
+      set(errorAtom, error instanceof Error ? error.message : 'Unknown error')
+    } finally {
+      set(isLoadingAtom, false)
     }
+  }
+)
+
+const resetUserAtom = atom(
+  null,
+  (_, set) => {
+    set(userNameAtom, '')
+    set(userEmailAtom, '')
+    set(errorAtom, null)
+    set(isLoadingAtom, false)
+  }
+)
+
+function ActionAtomDemo() {
+  const userName = useAtomValue(userNameAtom)
+  const userEmail = useAtomValue(userEmailAtom)
+  const isLoading = useAtomValue(isLoadingAtom)
+  const error = useAtomValue(errorAtom)
+  const updateUser = useSetAtom(updateUserAtom)
+  const resetUser = useSetAtom(resetUserAtom)
+
+  const [formName, setFormName] = useState('')
+  const [formEmail, setFormEmail] = useState('')
+
+  const handleUpdate = () => {
+    updateUser({ name: formName || 'Jane Smith', email: formEmail || 'jane@example.com' })
   }
 
   return (
-    <div className="text-center space-y-2">
-      <CodeBlock language='json'>
-        {lastResult}
-      </CodeBlock>
-      <Button onClick={handleClick} variant="outline" size="sm">
-        Perform Async Action
-      </Button>
+    <div className="space-y-4 p-4 bg-muted rounded-lg">
+      <div className="space-y-2">
+        <p><strong>Current Name:</strong> {userName}</p>
+        <p><strong>Current Email:</strong> {userEmail}</p>
+        {isLoading && <p className="text-primary">Loading...</p>}
+        {error && <p className="text-destructive">Error: {error}</p>}
+      </div>
+      
+      <div className="grid grid-cols-2 gap-2">
+        <input
+          placeholder="New name"
+          value={formName}
+          onChange={(e) => setFormName(e.target.value)}
+          className="p-2 text-sm border rounded"
+        />
+        <input
+          placeholder="New email"
+          value={formEmail}
+          onChange={(e) => setFormEmail(e.target.value)}
+          className="p-2 text-sm border rounded"
+        />
+      </div>
+      
+      <div className="flex gap-2">
+        <Button onClick={handleUpdate} disabled={isLoading} size="sm">
+          Update User
+        </Button>
+        <Button onClick={resetUser} variant="outline" size="sm">
+          Reset
+        </Button>
+      </div>
     </div>
   )
 }
@@ -101,24 +102,28 @@ function ActionAtomsComponent() {
   return (
     <div className="container mx-auto px-4 py-8 space-y-8">
       <div className="space-y-4">
-        <h1 className="text-4xl font-bold tracking-tight">Action Atoms & Atom Mutations</h1>
+        <h1 className="text-4xl font-bold tracking-tight">Action Atoms</h1>
         <p className="text-xl text-muted-foreground">
-          Co-locate business logic with state using action atoms for mutations and side-effects
+          Encapsulate business logic alongside state management with write-only atoms
         </p>
       </div>
 
       <Card className="bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Zap className="h-6 w-6 text-primary" />
-            What are Action Atoms?
+            <span className="text-2xl">⚡</span>
+            What Are Action Atoms?
           </CardTitle>
         </CardHeader>
         <CardContent>
           <p>
-            Action atoms are a neat feature of Jotai that allows you to co-locate business logic with state, 
-            leading to a tighter integration between the two. Action Atoms are essentially reducers + effects 
-            in Rematch, etc. They allow you to write both mutations and side-effects.
+            Action atoms are write-only atoms that encapsulate business logic and coordinate state changes 
+            across multiple atoms. They're perfect for operations that need to update several pieces of 
+            state in a coordinated way, like API calls, form submissions, or complex state transitions.
+          </p>
+          <p className="mt-2">
+            Think of them as "methods" for your state - they define what operations are possible and 
+            ensure they happen correctly and consistently.
           </p>
         </CardContent>
       </Card>
@@ -127,160 +132,451 @@ function ActionAtomsComponent() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <CodeIcon className="h-5 w-5 text-primary" />
-              Action Without Payload
+              <span className="text-2xl">1️⃣</span>
+              Basic Action Atom Pattern
             </CardTitle>
             <CardDescription>
-              Simple actions that don't require parameters
+              The fundamental structure of write-only atoms for business logic
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <p>
-              For actions that don't need any input parameters, set the read function on the atom to 
-              <Code>null</Code>.
+              Action atoms use the two-parameter form of <code>atom()</code> where the first parameter 
+              is <code>null</code> (no read function) and the second is the write function:
             </p>
             
             <CodeBlock language="typescript">
-{`const myAtom = atom("hello")
+{`// Basic action atom structure
+const actionAtom = atom(
+  null,  // No read function - this is write-only
+  (get, set, ...args) => {
+    // Business logic goes here
+    // Update other atoms as needed
+  }
+)
 
-// Action without payload. Read function is null!
-const capitalise = atom(null, (get, set) => {
-    set(myAtom, (curr) => curr[0].toUpperCase() + curr.slice(1))
-})
-
-// Can be used like this:
-const doCapitalise = useSetAtom(capitalise)
-// Does not require an arg!
-doCapitalise()`}
+// Example: Simple state update action
+const updateUserNameAtom = atom(
+  null,
+  (get, set, newName: string) => {
+    set(userNameAtom, newName)
+    set(lastUpdatedAtom, new Date())
+  }
+)`}
             </CodeBlock>
-          <CapitaliseExample />
+
+            <div className="bg-primary/5 p-4 rounded-lg border border-primary/20">
+              <p className="text-sm">
+                <strong>Key insight:</strong> The write function receives <code>get</code> for reading current state, 
+                <code>set</code> for updating atoms, and any arguments passed when the action is called.
+              </p>
+            </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <GitBranch className="h-5 w-5 text-primary" />
-              Action With Payload
+              <span className="text-2xl">2️⃣</span>
+              Coordinating Multiple State Updates
             </CardTitle>
             <CardDescription>
-              Actions that accept parameters for more flexible mutations
+              Use action atoms to ensure related state changes happen together
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <p>
-              Payload can be anything! The action atom will be strongly typed based on your payload type.
+              <strong>Group state mutations together into Action Atoms.</strong> This ensures that we always mutate 
+              all atoms once from a centralized location with the latest values. This helps prevent (but not fully stop) 
+              React from rendering the component between calls to mutators.
             </p>
             
-            <CodeBlock language="typescript">
-{`const myAtom = atom("hello")
+            <div className="space-y-4">
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+                  <span className="font-semibold text-green-700 dark:text-green-300">Do: Centralized Mutations</span>
+                </div>
+                <CodeBlock language="typescript">
+{`const myState = atom('test')
+const myOtherState = atom(5)
 
-// Payload can be anything!
-const replace = atom(null, (get, set, payload: string) => {
-    set(myAtom, payload)
+const mutateState = atom(null, (get, set, payload: {myStateValue: string, add: number}) => {
+    set(myState, payload.myStateValue)
+    set(myOtherState, (curr) => curr + payload.add)
 })
 
-const doReplace = useSetAtom(replace)
-// Needs an argument!
-doReplace("test")`}
-            </CodeBlock>
-          <ReplaceExample />
+// Usage
+const mutateAction = useSetAtom(mutateState)
+mutateAction({myStateValue: 'ayy', add: 2})`}
+                </CodeBlock>
+              </div>
+
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
+                  <span className="font-semibold text-red-700 dark:text-red-300">Don't: Scattered Component Logic</span>
+                </div>
+                <CodeBlock language="typescript">
+{`const [myStateValue, setMyState] = useAtom(myState)
+const [myOtherStateValue, setMyOtherState] = useAtom(myOtherState)
+
+const mutateState = useCallback((payload: {myStateValue: string, add: number}) => {
+    setMyState(payload.myStateValue)
+    setMyOtherState((curr) => curr + payload.add)
+}, [])
+
+mutateState({myStateValue: 'ayy', add: 2})`}
+                </CodeBlock>
+              </div>
+            </div>
+
+            <p>
+              One of the main benefits of this approach is coordinating updates across multiple atoms 
+              to prevent inconsistent intermediate states:
+            </p>
+            
+            <div className="space-y-4">
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+                  <span className="font-semibold text-green-700 dark:text-green-300">Good: Coordinated Updates</span>
+                </div>
+                <CodeBlock language="typescript">
+{`const userAtom = atom({ name: '', email: '' })
+const isLoadingAtom = atom(false)
+const errorAtom = atom(null)
+
+const updateUserAtom = atom(
+  null,
+  async (get, set, userData: { name: string; email: string }) => {
+    set(isLoadingAtom, true)
+    set(errorAtom, null)
+    
+    try {
+      const response = await updateUserAPI(userData)
+      set(userAtom, response.user)
+    } catch (error) {
+      set(errorAtom, error.message)
+    } finally {
+      set(isLoadingAtom, false)
+    }
+  }
+)`}
+                </CodeBlock>
+              </div>
+
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
+                  <span className="font-semibold text-red-700 dark:text-red-300">Poor: Scattered Updates</span>
+                </div>
+                <CodeBlock language="typescript">
+{`// In a component - logic scattered, error-prone
+const [user, setUser] = useAtom(userAtom)
+const [isLoading, setLoading] = useAtom(isLoadingAtom)
+const [error, setError] = useAtom(errorAtom)
+
+const updateUser = async (userData) => {
+  setLoading(true)
+  setError(null)
+  
+  try {
+    const response = await updateUserAPI(userData)
+    setUser(response.user)
+  } catch (error) {
+    setError(error.message)
+  } finally {
+    setLoading(false)  // Easy to forget!
+  }
+}`}
+                </CodeBlock>
+              </div>
+            </div>
+
+            <div className="bg-muted p-4 rounded-lg">
+              <p className="text-sm font-medium mb-2">Try the coordinated approach:</p>
+              <ActionAtomDemo />
+            </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <GitBranch className="h-5 w-5 text-primary" />
-              Composing Action Atoms
+              <span className="text-2xl">3️⃣</span>
+              Action Atom Composition
             </CardTitle>
             <CardDescription>
-              Action atoms can call other action atoms for complex workflows
+              Build complex operations by combining simpler action atoms
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <p>
-              Action atoms can be accessed like any other atom, allowing you to compose complex 
-              operations from simpler ones.
+              Action atoms can call other action atoms, allowing you to build complex operations 
+              from simpler, reusable pieces:
             </p>
             
             <CodeBlock language="typescript">
+{`// Basic actions
+const setUserNameAtom = atom(null, (get, set, name: string) => {
+  set(userNameAtom, name)
+})
+
+const setUserEmailAtom = atom(null, (get, set, email: string) => {
+  set(userEmailAtom, email)
+})
+
+const logUserUpdateAtom = atom(null, (get, set) => {
+  const user = get(userAtom)
+  console.log('User updated:', user)
+  set(lastUpdatedAtom, new Date())
+})
+
+// Composed action that uses other actions
+const updateUserProfileAtom = atom(
+  null,
+  (get, set, { name, email }: { name: string; email: string }) => {
+    set(setUserNameAtom, name)
+    set(setUserEmailAtom, email)
+    set(logUserUpdateAtom)
+  }
+)
+
+// Even more complex composition
+const resetAndUpdateUserAtom = atom(
+  null,
+  (get, set, userData: { name: string; email: string }) => {
+    set(resetUserAtom)  // Clear everything first
+    set(updateUserProfileAtom, userData)  // Then update
+  }
+)`}
+            </CodeBlock>
+
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border border-yellow-200 dark:border-yellow-800">
+              <div className="flex items-start gap-2">
+                <AlertTriangle className="h-4 w-4 text-yellow-600 dark:text-yellow-400 mt-0.5 flex-shrink-0" />
+                <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                  <strong>Best practice:</strong> Keep individual action atoms focused on a single responsibility, 
+                  then compose them for complex operations. This makes testing and debugging much easier.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <span className="text-2xl">4️⃣</span>
+              Async Action Patterns
+            </CardTitle>
+            <CardDescription>
+              Handle asynchronous operations with proper loading and error states
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p>
+              Action atoms excel at managing async operations because they can coordinate all the 
+              related state changes (loading, success, error) in one place:
+            </p>
+            
+            <CodeBlock language="typescript">
+{`// Standard async action pattern
+const fetchUserDataAtom = atom(
+  null,
+  async (get, set, userId: string) => {
+    set(loadingAtom, true)
+    set(errorAtom, null)
+    
+    try {
+      const userData = await api.getUser(userId)
+      set(userAtom, userData)
+      
+      // Update related state
+      set(lastFetchTimeAtom, new Date())
+      set(userCacheAtom, prev => ({ ...prev, [userId]: userData }))
+      
+    } catch (error) {
+      set(errorAtom, error.message)
+      
+      // Optional: Use cached data as fallback
+      const cached = get(userCacheAtom)[userId]
+      if (cached) {
+        set(userAtom, cached)
+      }
+    } finally {
+      set(loadingAtom, false)
+    }
+  }
+)
+
+// Debounced search action
+const searchUsersAtom = atom(
+  null,
+  debounce(async (get, set, query: string) => {
+    if (!query.trim()) {
+      set(searchResultsAtom, [])
+      return
+    }
+    
+    set(searchLoadingAtom, true)
+    try {
+      const results = await api.searchUsers(query)
+      set(searchResultsAtom, results)
+    } catch (error) {
+      set(searchErrorAtom, error.message)
+    } finally {
+      set(searchLoadingAtom, false)
+    }
+  }, 300)
+)`}
+            </CodeBlock>
+
+            <div className="bg-primary/5 p-4 rounded-lg border border-primary/20">
+              <p className="text-sm">
+                <strong>Pro tip:</strong> Use action atoms to implement optimistic updates, retry logic, 
+                and other sophisticated async patterns while keeping all the complexity contained.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <span className="text-2xl">5️⃣</span>
+              Direct Usage vs Facade Hooks
+            </CardTitle>
+            <CardDescription>
+              Prefer to read atoms and actions directly rather than via facade hooks
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p>
+              This allows consumers to mount only the atoms they require, leading to smaller performance 
+              overhead and easier testing. Avoid wrapping atoms in custom hooks unless you have a compelling reason.
+            </p>
+            
+            <div className="space-y-4">
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+                  <span className="font-semibold text-green-700 dark:text-green-300">Do: Direct Usage</span>
+                </div>
+                <CodeBlock language="typescript">
 {`const myAtom = atom("hello")
+const mutateMyAtom = atom(null, (get, set, payload: string) => 
+  set(myAtom, \`hello \${payload}\`)
+)
 
-const capitalise = atom(null, (get, set) => {
-    set(myAtom, (curr) => curr[0].toUpperCase() + curr.slice(1))
-})
+// In component
+const myAtomValue = useAtomValue(myAtom)
+const mutateMyAtomCallback = useSetAtom(mutateMyAtom)`}
+                </CodeBlock>
+              </div>
 
-const replace = atom(null, (get, set, payload: string) => {
-    set(myAtom, payload)
-})
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
+                  <span className="font-semibold text-red-700 dark:text-red-300">Don't: Facade Hooks</span>
+                </div>
+                <CodeBlock language="typescript">
+{`// Somewhere outside the component
+const useMyState = () => {
+    const myAtomValue = useAtomValue(myAtom)
+    const mutateMyAtomCallback = useSetAtom(mutateMyAtom)
+    
+    return {
+        myAtomValue,
+        mutateMyAtomCallback
+    }
+}
 
-// Action atoms can be accessed like any other atom
-const replaceAndCapitalise = atom(null, (get, set, payload: string) => {
-    set(replace, payload)
-    set(capitalise)
+// In component
+const { myAtomValue, mutateMyAtomCallback } = useMyState()`}
+                </CodeBlock>
+              </div>
+            </div>
+
+            <div className="bg-primary/5 p-4 rounded-lg border border-primary/20">
+              <p className="text-sm">
+                <strong>Why this matters:</strong> Direct usage allows React to optimize subscriptions more effectively 
+                and makes it clearer which atoms each component actually depends on.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <span className="text-2xl">6️⃣</span>
+              Testing Action Atoms
+            </CardTitle>
+            <CardDescription>
+              Action atoms are easy to test because they're pure functions
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p>
+              Since action atoms are just functions, they're straightforward to test. You can create 
+              a store, call the action, and verify the resulting state:
+            </p>
+            
+            <CodeBlock language="typescript">
+{`import { createStore } from 'jotai'
+import { updateUserAtom, userAtom, isLoadingAtom } from './atoms'
+
+test('updateUserAtom updates user and manages loading state', async () => {
+  const store = createStore()
+  
+  // Initial state
+  expect(store.get(userAtom)).toEqual({ name: '', email: '' })
+  expect(store.get(isLoadingAtom)).toBe(false)
+  
+  // Start the action
+  const updatePromise = store.set(updateUserAtom, { 
+    name: 'John', 
+    email: 'john@example.com' 
+  })
+  
+  // Check loading state
+  expect(store.get(isLoadingAtom)).toBe(true)
+  
+  // Wait for completion
+  await updatePromise
+  
+  // Check final state
+  expect(store.get(userAtom)).toEqual({ 
+    name: 'John', 
+    email: 'john@example.com' 
+  })
+  expect(store.get(isLoadingAtom)).toBe(false)
 })`}
             </CodeBlock>
-          <ComposeExample />
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Clock className="h-5 w-5 text-primary" />
-              Async Action Atoms
+              <span className="text-2xl">🚀</span>
+              Next Steps
             </CardTitle>
-            <CardDescription>
-              Action atoms can be async and return promises for side-effects
-            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <p>
-              Action atoms can be async and return a Promise, making them perfect for API calls, 
-              data fetching, and other asynchronous operations.
+              Now you understand how to encapsulate business logic with action atoms. Next, you'll learn 
+              about exporting atoms - how to create clean APIs that control access to your state.
             </p>
-            
-            <CodeBlock language="typescript">
-{`// Can also be async and return a Promise
-const asyncAction = atom(null, async (get, set) => {
-    const response = await fetch("https://jsonplaceholder.typicode.com/todos/1")
-    return response.json()
-})
-
-// Usage in component:
-const performAsyncAction = useSetAtom(asyncAction)
-
-const handleClick = async () => {
-    try {
-        const result = await performAsyncAction()
-        return result.json()
-    } catch (error) {
-        console.error('Action failed:', error)
-    }
-}`}
-            </CodeBlock>
-          <AsyncActionExample />
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-r from-secondary/30 to-secondary/10 border-secondary">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <span className="text-2xl">💡</span>
-              Key Benefits
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-2 list-disc list-inside text-muted-foreground">
-              <li><strong className="text-foreground">Co-location:</strong> Business logic lives next to the state it modifies</li>
-              <li><strong className="text-foreground">Independence from React:</strong> State is modified outside of React's lifecycle</li>
-              <li><strong className="text-foreground">Atomic updates:</strong> Multiple state changes happen in a single operation</li>
-              <li><strong className="text-foreground">Type safety:</strong> Full TypeScript support for payloads and return types</li>
-              <li><strong className="text-foreground">Composability:</strong> Action atoms can call other action atoms</li>
-              <li><strong className="text-foreground">Async support:</strong> Built-in support for promises and async operations</li>
-              <li><strong className="text-foreground">Testability:</strong> Easy to test in isolation with mock stores</li>
-            </ul>
+            <Link 
+              to="/concepts/exporting-atoms" 
+              className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
+            >
+              <span>Up next: Exporting & Boundaries</span>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
           </CardContent>
         </Card>
       </div>

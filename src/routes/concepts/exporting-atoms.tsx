@@ -1,7 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CodeBlock } from '@/components/ui/code-block'
-import { Shield, Lock, Share, AlertTriangle, CheckCircle, XCircle } from 'lucide-react'
+import { Lock, Share, CheckCircle, XCircle, ArrowRight } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/concepts/exporting-atoms')({
   component: ExportingAtomsComponent,
@@ -11,24 +12,28 @@ function ExportingAtomsComponent() {
   return (
     <div className="container mx-auto px-4 py-8 space-y-8">
       <div className="space-y-4">
-        <h1 className="text-4xl font-bold tracking-tight">Exporting Atoms</h1>
+        <h1 className="text-4xl font-bold tracking-tight">Exporting & Boundaries</h1>
         <p className="text-xl text-muted-foreground">
-          Maintain control over your state by exposing narrow, specific APIs to consumers
+          Design clean APIs that control access to your state and maintain domain boundaries
         </p>
       </div>
 
-      <Card className="bg-gradient-to-r from-destructive/5 to-destructive/10 border-destructive/20">
+      <Card className="bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <AlertTriangle className="h-6 w-6 text-destructive" />
-            The Problem with Direct Atom Exports
+            <span className="text-2xl">🌯</span>
+            Creating Domain Boundaries
           </CardTitle>
         </CardHeader>
         <CardContent>
           <p>
-            Even if you structure your Atoms well, you can still end up in an unfortunate situation 
-            if anyone can mutate your data in any way they want. Direct atom exports can lead to 
-            uncontrolled mutations that bypass your business logic.
+            Just like good API design, your atom exports should be intentional and controlled. 
+            By carefully choosing what you expose, you create clear boundaries between domains 
+            and prevent unauthorized access to internal state.
+          </p>
+          <p className="mt-2">
+            Think of it as designing the "public interface" of your state domain - what operations 
+            should other parts of your application be allowed to perform?
           </p>
         </CardContent>
       </Card>
@@ -209,7 +214,7 @@ const MyComponent = () => {
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
-                  <span className="font-semibold text-green-700 dark:text-green-300">Do ✅</span>
+                  <span className="font-semibold text-green-700 dark:text-green-300">Do</span>
                 </div>
                 <CodeBlock language="typescript">
 {`const currentDateAtom = atom(new Date())
@@ -224,7 +229,7 @@ export const Atoms = {
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
-                  <span className="font-semibold text-red-700 dark:text-red-300">Don't ❌</span>
+                  <span className="font-semibold text-red-700 dark:text-red-300">Don't</span>
                 </div>
                 <CodeBlock language="typescript">
 {`export const currentDateAtom = atom(new Date())`}
@@ -237,79 +242,43 @@ export const Atoms = {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Shield className="h-5 w-5 text-primary" />
-              Complex Example: User Preferences
+              <span className="text-2xl">⚖️</span>
+              Cross-Domain Mutation Guidelines
             </CardTitle>
             <CardDescription>
-              A real-world example of controlled atom exports
+              When and how to allow state mutations across domain boundaries
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <CodeBlock language="typescript">
-{`// userPreferences.ts
-interface UserPreferences {
-    theme: 'light' | 'dark' | 'system'
-    language: string
-    notifications: boolean
-    autoSave: boolean
-}
+            <p>
+              <strong>Prefer to write code that minimizes atom mutations across domain boundaries.</strong> 
+              Export Action Atoms if there's no other way, but always with careful consideration.
+            </p>
+            
+            <div className="space-y-3">
+              <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg border border-green-200 dark:border-green-800">
+                <p className="text-sm text-green-800 dark:text-green-200">
+                  <strong>✅ Preferred:</strong> Keep mutations within the same domain where the atoms are defined
+                </p>
+              </div>
+              <div className="bg-yellow-50 dark:bg-yellow-900/20 p-3 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                  <strong>⚠️ Acceptable:</strong> Export specific action atoms for cross-domain operations with clear contracts
+                </p>
+              </div>
+              <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded-lg border border-red-200 dark:border-red-800">
+                <p className="text-sm text-red-800 dark:text-red-200">
+                  <strong>❌ Avoid:</strong> Direct writable atom exports that allow unrestricted mutations
+                </p>
+              </div>
+            </div>
 
-const _preferencesAtom = atom<UserPreferences>({
-    theme: 'system',
-    language: 'en',
-    notifications: true,
-    autoSave: true
-})
-
-// Read-only access to preferences
-export const preferencesAtom = atom((get) => get(_preferencesAtom))
-
-// Controlled mutations through action atoms
-export const updateThemeAtom = atom(null, (get, set, theme: UserPreferences['theme']) => {
-    const current = get(_preferencesAtom)
-    set(_preferencesAtom, { ...current, theme })
-    
-    // Apply theme immediately
-    document.documentElement.setAttribute('data-theme', theme)
-})
-
-export const updateLanguageAtom = atom(null, async (get, set, language: string) => {
-    // Validate language is supported
-    const supportedLanguages = ['en', 'es', 'fr', 'de']
-    if (!supportedLanguages.includes(language)) {
-        throw new Error(\`Unsupported language: \${language}\`)
-    }
-    
-    const current = get(_preferencesAtom)
-    set(_preferencesAtom, { ...current, language })
-    
-    // Load language resources
-    await loadLanguageResources(language)
-})
-
-export const toggleNotificationsAtom = atom(null, (get, set) => {
-    const current = get(_preferencesAtom)
-    const newValue = !current.notifications
-    
-    set(_preferencesAtom, { ...current, notifications: newValue })
-    
-    // Update browser notification permissions
-    if (newValue && Notification.permission === 'default') {
-        Notification.requestPermission()
-    }
-})
-
-// Bulk update with validation
-export const updatePreferencesAtom = atom(null, (get, set, updates: Partial<UserPreferences>) => {
-    const current = get(_preferencesAtom)
-    const newPreferences = { ...current, ...updates }
-    
-    // Validate the complete preferences object
-    validatePreferences(newPreferences)
-    
-    set(_preferencesAtom, newPreferences)
-})`}
-            </CodeBlock>
+            <div className="bg-primary/5 p-4 rounded-lg border border-primary/20">
+              <p className="text-sm">
+                <strong>Design principle:</strong> Each domain should be the authoritative source for its own state. 
+                Cross-domain mutations should be rare, explicit, and well-defined.
+              </p>
+            </div>
           </CardContent>
         </Card>
 
@@ -328,7 +297,34 @@ export const updatePreferencesAtom = atom(null, (get, set, updates: Partial<User
               <li><strong className="text-foreground">Create controlled write APIs</strong> that enforce business rules</li>
               <li><strong className="text-foreground">Minimize atom mutations</strong> across domain boundaries</li>
               <li><strong className="text-foreground">Co-locate validation logic</strong> with the atoms that need it</li>
+              <li><strong className="text-foreground">Export action atoms sparingly</strong> for unavoidable cross-domain mutations</li>
             </ul>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <span className="text-2xl">🎉</span>
+              Congratulations!
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p>
+              You've now mastered the core state management patterns! You understand how to structure atoms, 
+              compose them effectively, encapsulate business logic with action atoms, and create clean domain boundaries.
+            </p>
+            <p>
+              There's one more concept that completes the picture: <strong>Effects</strong> - reactive patterns 
+              for side-effects and external system integration.
+            </p>
+            <Link 
+              to="/concepts/effects" 
+              className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
+            >
+              <span>Next: Effects & Side Effects</span>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
           </CardContent>
         </Card>
       </div>

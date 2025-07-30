@@ -29,6 +29,7 @@ import { Route as ExamplesActionAtomsRouteImport } from './routes/examples/actio
 import { Route as ConceptsExportingAtomsRouteImport } from './routes/concepts/exporting-atoms'
 import { Route as ConceptsEffectsRouteImport } from './routes/concepts/effects'
 import { Route as ConceptsDeclaringAtomsRouteImport } from './routes/concepts/declaring-atoms'
+import { Route as ConceptsCompositionRouteImport } from './routes/concepts/composition'
 import { Route as ConceptsActionAtomsRouteImport } from './routes/concepts/action-atoms'
 import { Route as AdvancedTestingRouteImport } from './routes/advanced/testing'
 import { Route as AdvancedAsyncRouteImport } from './routes/advanced/async'
@@ -135,6 +136,11 @@ const ConceptsDeclaringAtomsRoute = ConceptsDeclaringAtomsRouteImport.update({
   path: '/concepts/declaring-atoms',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ConceptsCompositionRoute = ConceptsCompositionRouteImport.update({
+  id: '/concepts/composition',
+  path: '/concepts/composition',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ConceptsActionAtomsRoute = ConceptsActionAtomsRouteImport.update({
   id: '/concepts/action-atoms',
   path: '/concepts/action-atoms',
@@ -156,6 +162,7 @@ export interface FileRoutesByFullPath {
   '/advanced/async': typeof AdvancedAsyncRoute
   '/advanced/testing': typeof AdvancedTestingRoute
   '/concepts/action-atoms': typeof ConceptsActionAtomsRoute
+  '/concepts/composition': typeof ConceptsCompositionRoute
   '/concepts/declaring-atoms': typeof ConceptsDeclaringAtomsRoute
   '/concepts/effects': typeof ConceptsEffectsRoute
   '/concepts/exporting-atoms': typeof ConceptsExportingAtomsRoute
@@ -181,6 +188,7 @@ export interface FileRoutesByTo {
   '/advanced/async': typeof AdvancedAsyncRoute
   '/advanced/testing': typeof AdvancedTestingRoute
   '/concepts/action-atoms': typeof ConceptsActionAtomsRoute
+  '/concepts/composition': typeof ConceptsCompositionRoute
   '/concepts/declaring-atoms': typeof ConceptsDeclaringAtomsRoute
   '/concepts/effects': typeof ConceptsEffectsRoute
   '/concepts/exporting-atoms': typeof ConceptsExportingAtomsRoute
@@ -207,6 +215,7 @@ export interface FileRoutesById {
   '/advanced/async': typeof AdvancedAsyncRoute
   '/advanced/testing': typeof AdvancedTestingRoute
   '/concepts/action-atoms': typeof ConceptsActionAtomsRoute
+  '/concepts/composition': typeof ConceptsCompositionRoute
   '/concepts/declaring-atoms': typeof ConceptsDeclaringAtomsRoute
   '/concepts/effects': typeof ConceptsEffectsRoute
   '/concepts/exporting-atoms': typeof ConceptsExportingAtomsRoute
@@ -234,6 +243,7 @@ export interface FileRouteTypes {
     | '/advanced/async'
     | '/advanced/testing'
     | '/concepts/action-atoms'
+    | '/concepts/composition'
     | '/concepts/declaring-atoms'
     | '/concepts/effects'
     | '/concepts/exporting-atoms'
@@ -259,6 +269,7 @@ export interface FileRouteTypes {
     | '/advanced/async'
     | '/advanced/testing'
     | '/concepts/action-atoms'
+    | '/concepts/composition'
     | '/concepts/declaring-atoms'
     | '/concepts/effects'
     | '/concepts/exporting-atoms'
@@ -284,6 +295,7 @@ export interface FileRouteTypes {
     | '/advanced/async'
     | '/advanced/testing'
     | '/concepts/action-atoms'
+    | '/concepts/composition'
     | '/concepts/declaring-atoms'
     | '/concepts/effects'
     | '/concepts/exporting-atoms'
@@ -310,6 +322,7 @@ export interface RootRouteChildren {
   AdvancedAsyncRoute: typeof AdvancedAsyncRoute
   AdvancedTestingRoute: typeof AdvancedTestingRoute
   ConceptsActionAtomsRoute: typeof ConceptsActionAtomsRoute
+  ConceptsCompositionRoute: typeof ConceptsCompositionRoute
   ConceptsDeclaringAtomsRoute: typeof ConceptsDeclaringAtomsRoute
   ConceptsEffectsRoute: typeof ConceptsEffectsRoute
   ConceptsExportingAtomsRoute: typeof ConceptsExportingAtomsRoute
@@ -473,6 +486,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConceptsDeclaringAtomsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/concepts/composition': {
+      id: '/concepts/composition'
+      path: '/concepts/composition'
+      fullPath: '/concepts/composition'
+      preLoaderRoute: typeof ConceptsCompositionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/concepts/action-atoms': {
       id: '/concepts/action-atoms'
       path: '/concepts/action-atoms'
@@ -502,6 +522,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdvancedAsyncRoute: AdvancedAsyncRoute,
   AdvancedTestingRoute: AdvancedTestingRoute,
   ConceptsActionAtomsRoute: ConceptsActionAtomsRoute,
+  ConceptsCompositionRoute: ConceptsCompositionRoute,
   ConceptsDeclaringAtomsRoute: ConceptsDeclaringAtomsRoute,
   ConceptsEffectsRoute: ConceptsEffectsRoute,
   ConceptsExportingAtomsRoute: ConceptsExportingAtomsRoute,

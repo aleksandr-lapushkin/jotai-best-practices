@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CodeBlock } from '@/components/ui/code-block'
-import { CheckCircle, XCircle } from 'lucide-react'
-import { Code } from '@/components/ui/code'
+import { CheckCircle, XCircle, ArrowRight } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/concepts/declaring-atoms')({
   component: DeclaringAtomsComponent,
@@ -12,9 +12,9 @@ function DeclaringAtomsComponent() {
   return (
     <div className="container mx-auto px-4 py-8 space-y-8">
       <div className="space-y-4">
-        <h1 className="text-4xl font-bold tracking-tight">Declaring and Structuring Atoms</h1>
+        <h1 className="text-4xl font-bold tracking-tight">Structuring Atoms</h1>
         <p className="text-xl text-muted-foreground">
-          Best practices for organizing atomic state to keep your application maintainable and performant
+          Essential patterns for organizing atomic state in scalable applications
         </p>
       </div>
 
@@ -27,12 +27,12 @@ function DeclaringAtomsComponent() {
         </CardHeader>
         <CardContent>
           <p>
-            Since all state in Jotai is defined in Atoms, it's imperative that you have a clear structure 
-            for your Atoms. Otherwise your state will get smeared throughout your app, making it extremely 
+            Since all state in Jotai is defined in atoms, it's imperative that you have a clear structure 
+            for your atoms. Otherwise your state will get smeared throughout your app, making it extremely 
             difficult to work with.
           </p>
           <p className="mt-2">
-            An approach that works relatively well is to define all Atoms that belong to a given domain together.
+            <strong>Domain-driven organization</strong> works best: define all atoms that belong to a given domain together.
           </p>
         </CardContent>
       </Card>
@@ -50,7 +50,8 @@ function DeclaringAtomsComponent() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p>
-              This makes it easier to derive other atoms and makes it easier to reason about state when refactoring your code or implementing new features.
+              This makes it easier to derive other atoms and makes it easier to reason about state when 
+              refactoring your code or implementing new features.
             </p>
             
             <div className="space-y-4">
@@ -65,7 +66,7 @@ const selectedDate = atom(null)
 const isLoadingState = atom({isLoading: false, isLoadingMore: false})
 
 // Checking for usages of currentDate will yield only results where it's explicitly used
-const derived = atom((get) => get(currentDate))`}
+const derived = atom((get) => get(currentDateAtom))`}
                 </CodeBlock>
               </div>
 
@@ -98,9 +99,8 @@ const derived = atom((get) => get(state).currentDate)`}
           <CardContent className="space-y-4">
             <p>
               The less state we need to update manually, the fewer error vectors we have. Moreover, 
-              deriving values prevents race conditions or multiple updates. Any call to Jotai's 
-              <Code>set</Code> is immediate. Multiple sequential 
-              calls technically <strong>could</strong> cause multiple re-renders with inconsistent state in-between.
+              deriving values ensures consistency - derived atoms automatically update when their dependencies change, 
+              eliminating the need to manually keep related state in sync.
             </p>
             
             <div className="space-y-4">
@@ -140,57 +140,73 @@ useEffect(() => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <span className="text-2xl">3️⃣</span>
-              Group State Mutations with Action Atoms
+              Domain-Based Organization
             </CardTitle>
             <CardDescription>
-              Centralize related state changes to prevent inconsistent intermediate states
+              Group related atoms together by business domain, not technical function
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <p>
-              This ensures that we always mutate all atoms once from a centralized location with the 
-              latest values. This helps prevent (but not fully stop) React from rendering the component 
-              between calls to mutators.
+              Organizing atoms by domain makes it easier to understand, maintain, and refactor your state management. 
+              Each domain becomes a cohesive unit with clear boundaries.
             </p>
             
             <div className="space-y-4">
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
-                  <span className="font-semibold text-green-700 dark:text-green-300">Do</span>
+                  <span className="font-semibold text-green-700 dark:text-green-300">Good Organization</span>
                 </div>
                 <CodeBlock language="typescript">
-{`const myState = atom('test')
-const myOtherState = atom(5)
-
-const mutateState = atom(null, (get, set, payload: {myStateValue: string, add: number}) => {
-    set(myState, payload.myStateValue)
-    set(myOtherState, (curr) => curr + payload.add)
+{`// user-domain/atoms.ts
+export const currentUserAtom = atom(null)
+export const userPreferencesAtom = atom({})
+export const userPermissionsAtom = atom((get) => {
+  const user = get(currentUserAtom)
+  return user ? calculatePermissions(user.role) : []
 })
 
-// In component:
-const mutateAction = useSetAtom(mutateState)
-mutateAction({myStateValue: 'ayy', add: 2})`}
+// calendar-domain/atoms.ts  
+export const selectedDateAtom = atom(new Date())
+export const calendarEventsAtom = atom([])
+export const filteredEventsAtom = atom((get) => {
+  const date = get(selectedDateAtom)
+  const events = get(calendarEventsAtom)
+  return events.filter(event => isSameDay(event.date, date))
+})`}
                 </CodeBlock>
               </div>
 
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
-                  <span className="font-semibold text-red-700 dark:text-red-300">Don't</span>
+                  <span className="font-semibold text-red-700 dark:text-red-300">Poor Organization</span>
                 </div>
                 <CodeBlock language="typescript">
-{`const [myStateValue, setMyState] = useAtom(myState)
-const [myOtherStateValue, setMyOtherState] = useAtom(myOtherState)
+{`// ❌ Everything mixed together
+const appStateAtom = atom({
+  user: null,
+  selectedDate: new Date(),
+  calendarEvents: [],
+  isLoading: false,
+  preferences: {}
+})
 
-const mutateState = useCallback((payload: {myStateValue: string, add: number}) => {
-    setMyState(payload.myStateValue)
-    setMyOtherState((curr) => curr + payload.add)
-}, [])
-
-mutateState({myStateValue: 'ayy', add: 2})`}
+// Hard to understand what this atom actually needs
+const someComputedAtom = atom((get) => {
+  const state = get(appStateAtom)
+  return processUserData(state.user, state.preferences)
+})`}
                 </CodeBlock>
               </div>
+            </div>
+
+            <div className="bg-primary/5 p-4 rounded-lg border border-primary/20">
+              <p className="text-sm">
+                <strong>Key insight:</strong> Think of each domain as a mini state management system with its 
+                own atoms, derived state, and internal logic. This makes your app easier to reason about and refactor.
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -198,106 +214,22 @@ mutateState({myStateValue: 'ayy', add: 2})`}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <span className="text-2xl">3️⃣</span>
-              Consider custom write functions
+              <span className="text-2xl">🚀</span>
+              Next Steps
             </CardTitle>
-            <CardDescription>
-              Define how data can be mutated directly within the atom
-            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <p>
-              This is a slightly more advanced pattern when compared to declaring separate actions, but it probably is the most idiomatic one: how data can be mutated is part of the data definition.
+              Now that you understand how to structure and organize atoms effectively, you're ready to 
+              learn about composition - how to build complex state from simple atomic building blocks.
             </p>
-            
-            <div className="space-y-4">
-              <div>
-               
-                <CodeBlock language="typescript">
-                  {`const myState = atom(
-  { someField: 'test', anotherField: 5 }, 
-   (get, set, payload:
-    | { type: "increment" | "decrement", value: number }
-    | {type: "updateField", value: string}) => {
-      switch (payload.type) {
-        case "increment":
-          set(myState, (curr) => ({ ...curr, anotherField: curr.anotherField + payload.value }))
-          break
-        case "decrement":
-          set(myState, (curr) => ({ ...curr, anotherField: curr.anotherField - payload.value }))
-          break
-        case "updateField":
-          set(myState, (curr) => ({ ...curr, someField: payload.value }))
-          break
-      }
-    })
-)
-
-// In component:
-const [value, updateValue] = useAtom(myState)
-updateValue({ type: 'increment', value: 2 }) // Increment anotherField by 2
-updateValue({ type: 'updateField', value: 'new value' }) // Update someField
-`}
-                </CodeBlock>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <span className="text-2xl">4️⃣</span>
-              Use Direct Atom Access Over Facade Hooks
-            </CardTitle>
-            <CardDescription>
-              Read atoms and actions directly for better performance and easier testing
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p>
-              This allows consumers to mount only the atoms they require, leading to a smaller 
-              performance overhead and easier testing.
-            </p>
-            
-            <div className="space-y-4">
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
-                  <span className="font-semibold text-green-700 dark:text-green-300">Do ✅</span>
-                </div>
-                <CodeBlock language="typescript">
-{`const myAtom = atom("hello")
-const mutateMyAtom = atom(null, (get, set, payload: string) => set(myAtom, \`hello \${payload}\`))
-
-// In component:
-const myAtomValue = useAtomValue(myAtom)
-const mutateMyAtomCallback = useSetAtom(mutateMyAtom)`}
-                </CodeBlock>
-              </div>
-
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
-                  <span className="font-semibold text-red-700 dark:text-red-300">Don't ❌</span>
-                </div>
-                <CodeBlock language="typescript">
-{`// Somewhere outside the component
-const useMyState = () => {
-    const myAtomValue = useAtomValue(myAtom)
-    const mutateMyAtomCallback = useSetAtom(mutateMyAtom)
-    
-    return {
-        myAtomValue,
-        mutateMyAtomCallback
-    }
-}
-
-// In component
-const { myAtomValue, mutateMyAtomCallback } = useMyState()`}
-                </CodeBlock>
-              </div>
-            </div>
+            <Link 
+              to="/concepts/composition" 
+              className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
+            >
+              <span>Up next: Atom Composition</span>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
           </CardContent>
         </Card>
       </div>
