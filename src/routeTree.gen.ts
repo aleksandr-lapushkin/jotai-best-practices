@@ -10,18 +10,36 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as UtilitiesIndexRouteImport } from './routes/utilities/index'
 import { Route as ExamplesIndexRouteImport } from './routes/examples/index'
 import { Route as ConceptsIndexRouteImport } from './routes/concepts/index'
+import { Route as AdvancedIndexRouteImport } from './routes/advanced/index'
+import { Route as UtilitiesAtomWithReducerRouteImport } from './routes/utilities/atomWithReducer'
+import { Route as UtilitiesAtomWithQueryRouteImport } from './routes/utilities/atomWithQuery'
+import { Route as UtilitiesAtomWithDefaultRouteImport } from './routes/utilities/atomWithDefault'
+import { Route as UtilitiesAtomFamilyRouteImport } from './routes/utilities/atomFamily'
 import { Route as OverviewSetupRouteImport } from './routes/overview/setup'
 import { Route as OverviewHowItWorksRouteImport } from './routes/overview/how-it-works'
+import { Route as ExamplesPersistenceRouteImport } from './routes/examples/persistence'
+import { Route as ExamplesFormManagementRouteImport } from './routes/examples/form-management'
+import { Route as ExamplesBasicCounterRouteImport } from './routes/examples/basic-counter'
+import { Route as ExamplesAsyncDataRouteImport } from './routes/examples/async-data'
+import { Route as ExamplesActionAtomsRouteImport } from './routes/examples/action-atoms'
 import { Route as ConceptsExportingAtomsRouteImport } from './routes/concepts/exporting-atoms'
 import { Route as ConceptsEffectsRouteImport } from './routes/concepts/effects'
 import { Route as ConceptsDeclaringAtomsRouteImport } from './routes/concepts/declaring-atoms'
 import { Route as ConceptsActionAtomsRouteImport } from './routes/concepts/action-atoms'
+import { Route as AdvancedTestingRouteImport } from './routes/advanced/testing'
+import { Route as AdvancedAsyncRouteImport } from './routes/advanced/async'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UtilitiesIndexRoute = UtilitiesIndexRouteImport.update({
+  id: '/utilities/',
+  path: '/utilities/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExamplesIndexRoute = ExamplesIndexRouteImport.update({
@@ -34,6 +52,33 @@ const ConceptsIndexRoute = ConceptsIndexRouteImport.update({
   path: '/concepts/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdvancedIndexRoute = AdvancedIndexRouteImport.update({
+  id: '/advanced/',
+  path: '/advanced/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UtilitiesAtomWithReducerRoute =
+  UtilitiesAtomWithReducerRouteImport.update({
+    id: '/utilities/atomWithReducer',
+    path: '/utilities/atomWithReducer',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const UtilitiesAtomWithQueryRoute = UtilitiesAtomWithQueryRouteImport.update({
+  id: '/utilities/atomWithQuery',
+  path: '/utilities/atomWithQuery',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UtilitiesAtomWithDefaultRoute =
+  UtilitiesAtomWithDefaultRouteImport.update({
+    id: '/utilities/atomWithDefault',
+    path: '/utilities/atomWithDefault',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const UtilitiesAtomFamilyRoute = UtilitiesAtomFamilyRouteImport.update({
+  id: '/utilities/atomFamily',
+  path: '/utilities/atomFamily',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OverviewSetupRoute = OverviewSetupRouteImport.update({
   id: '/overview/setup',
   path: '/overview/setup',
@@ -42,6 +87,31 @@ const OverviewSetupRoute = OverviewSetupRouteImport.update({
 const OverviewHowItWorksRoute = OverviewHowItWorksRouteImport.update({
   id: '/overview/how-it-works',
   path: '/overview/how-it-works',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExamplesPersistenceRoute = ExamplesPersistenceRouteImport.update({
+  id: '/examples/persistence',
+  path: '/examples/persistence',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExamplesFormManagementRoute = ExamplesFormManagementRouteImport.update({
+  id: '/examples/form-management',
+  path: '/examples/form-management',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExamplesBasicCounterRoute = ExamplesBasicCounterRouteImport.update({
+  id: '/examples/basic-counter',
+  path: '/examples/basic-counter',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExamplesAsyncDataRoute = ExamplesAsyncDataRouteImport.update({
+  id: '/examples/async-data',
+  path: '/examples/async-data',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExamplesActionAtomsRoute = ExamplesActionAtomsRouteImport.update({
+  id: '/examples/action-atoms',
+  path: '/examples/action-atoms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ConceptsExportingAtomsRoute = ConceptsExportingAtomsRouteImport.update({
@@ -64,87 +134,188 @@ const ConceptsActionAtomsRoute = ConceptsActionAtomsRouteImport.update({
   path: '/concepts/action-atoms',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdvancedTestingRoute = AdvancedTestingRouteImport.update({
+  id: '/advanced/testing',
+  path: '/advanced/testing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdvancedAsyncRoute = AdvancedAsyncRouteImport.update({
+  id: '/advanced/async',
+  path: '/advanced/async',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/advanced/async': typeof AdvancedAsyncRoute
+  '/advanced/testing': typeof AdvancedTestingRoute
   '/concepts/action-atoms': typeof ConceptsActionAtomsRoute
   '/concepts/declaring-atoms': typeof ConceptsDeclaringAtomsRoute
   '/concepts/effects': typeof ConceptsEffectsRoute
   '/concepts/exporting-atoms': typeof ConceptsExportingAtomsRoute
+  '/examples/action-atoms': typeof ExamplesActionAtomsRoute
+  '/examples/async-data': typeof ExamplesAsyncDataRoute
+  '/examples/basic-counter': typeof ExamplesBasicCounterRoute
+  '/examples/form-management': typeof ExamplesFormManagementRoute
+  '/examples/persistence': typeof ExamplesPersistenceRoute
   '/overview/how-it-works': typeof OverviewHowItWorksRoute
   '/overview/setup': typeof OverviewSetupRoute
+  '/utilities/atomFamily': typeof UtilitiesAtomFamilyRoute
+  '/utilities/atomWithDefault': typeof UtilitiesAtomWithDefaultRoute
+  '/utilities/atomWithQuery': typeof UtilitiesAtomWithQueryRoute
+  '/utilities/atomWithReducer': typeof UtilitiesAtomWithReducerRoute
+  '/advanced': typeof AdvancedIndexRoute
   '/concepts': typeof ConceptsIndexRoute
   '/examples': typeof ExamplesIndexRoute
+  '/utilities': typeof UtilitiesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/advanced/async': typeof AdvancedAsyncRoute
+  '/advanced/testing': typeof AdvancedTestingRoute
   '/concepts/action-atoms': typeof ConceptsActionAtomsRoute
   '/concepts/declaring-atoms': typeof ConceptsDeclaringAtomsRoute
   '/concepts/effects': typeof ConceptsEffectsRoute
   '/concepts/exporting-atoms': typeof ConceptsExportingAtomsRoute
+  '/examples/action-atoms': typeof ExamplesActionAtomsRoute
+  '/examples/async-data': typeof ExamplesAsyncDataRoute
+  '/examples/basic-counter': typeof ExamplesBasicCounterRoute
+  '/examples/form-management': typeof ExamplesFormManagementRoute
+  '/examples/persistence': typeof ExamplesPersistenceRoute
   '/overview/how-it-works': typeof OverviewHowItWorksRoute
   '/overview/setup': typeof OverviewSetupRoute
+  '/utilities/atomFamily': typeof UtilitiesAtomFamilyRoute
+  '/utilities/atomWithDefault': typeof UtilitiesAtomWithDefaultRoute
+  '/utilities/atomWithQuery': typeof UtilitiesAtomWithQueryRoute
+  '/utilities/atomWithReducer': typeof UtilitiesAtomWithReducerRoute
+  '/advanced': typeof AdvancedIndexRoute
   '/concepts': typeof ConceptsIndexRoute
   '/examples': typeof ExamplesIndexRoute
+  '/utilities': typeof UtilitiesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/advanced/async': typeof AdvancedAsyncRoute
+  '/advanced/testing': typeof AdvancedTestingRoute
   '/concepts/action-atoms': typeof ConceptsActionAtomsRoute
   '/concepts/declaring-atoms': typeof ConceptsDeclaringAtomsRoute
   '/concepts/effects': typeof ConceptsEffectsRoute
   '/concepts/exporting-atoms': typeof ConceptsExportingAtomsRoute
+  '/examples/action-atoms': typeof ExamplesActionAtomsRoute
+  '/examples/async-data': typeof ExamplesAsyncDataRoute
+  '/examples/basic-counter': typeof ExamplesBasicCounterRoute
+  '/examples/form-management': typeof ExamplesFormManagementRoute
+  '/examples/persistence': typeof ExamplesPersistenceRoute
   '/overview/how-it-works': typeof OverviewHowItWorksRoute
   '/overview/setup': typeof OverviewSetupRoute
+  '/utilities/atomFamily': typeof UtilitiesAtomFamilyRoute
+  '/utilities/atomWithDefault': typeof UtilitiesAtomWithDefaultRoute
+  '/utilities/atomWithQuery': typeof UtilitiesAtomWithQueryRoute
+  '/utilities/atomWithReducer': typeof UtilitiesAtomWithReducerRoute
+  '/advanced/': typeof AdvancedIndexRoute
   '/concepts/': typeof ConceptsIndexRoute
   '/examples/': typeof ExamplesIndexRoute
+  '/utilities/': typeof UtilitiesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/advanced/async'
+    | '/advanced/testing'
     | '/concepts/action-atoms'
     | '/concepts/declaring-atoms'
     | '/concepts/effects'
     | '/concepts/exporting-atoms'
+    | '/examples/action-atoms'
+    | '/examples/async-data'
+    | '/examples/basic-counter'
+    | '/examples/form-management'
+    | '/examples/persistence'
     | '/overview/how-it-works'
     | '/overview/setup'
+    | '/utilities/atomFamily'
+    | '/utilities/atomWithDefault'
+    | '/utilities/atomWithQuery'
+    | '/utilities/atomWithReducer'
+    | '/advanced'
     | '/concepts'
     | '/examples'
+    | '/utilities'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/advanced/async'
+    | '/advanced/testing'
     | '/concepts/action-atoms'
     | '/concepts/declaring-atoms'
     | '/concepts/effects'
     | '/concepts/exporting-atoms'
+    | '/examples/action-atoms'
+    | '/examples/async-data'
+    | '/examples/basic-counter'
+    | '/examples/form-management'
+    | '/examples/persistence'
     | '/overview/how-it-works'
     | '/overview/setup'
+    | '/utilities/atomFamily'
+    | '/utilities/atomWithDefault'
+    | '/utilities/atomWithQuery'
+    | '/utilities/atomWithReducer'
+    | '/advanced'
     | '/concepts'
     | '/examples'
+    | '/utilities'
   id:
     | '__root__'
     | '/'
+    | '/advanced/async'
+    | '/advanced/testing'
     | '/concepts/action-atoms'
     | '/concepts/declaring-atoms'
     | '/concepts/effects'
     | '/concepts/exporting-atoms'
+    | '/examples/action-atoms'
+    | '/examples/async-data'
+    | '/examples/basic-counter'
+    | '/examples/form-management'
+    | '/examples/persistence'
     | '/overview/how-it-works'
     | '/overview/setup'
+    | '/utilities/atomFamily'
+    | '/utilities/atomWithDefault'
+    | '/utilities/atomWithQuery'
+    | '/utilities/atomWithReducer'
+    | '/advanced/'
     | '/concepts/'
     | '/examples/'
+    | '/utilities/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdvancedAsyncRoute: typeof AdvancedAsyncRoute
+  AdvancedTestingRoute: typeof AdvancedTestingRoute
   ConceptsActionAtomsRoute: typeof ConceptsActionAtomsRoute
   ConceptsDeclaringAtomsRoute: typeof ConceptsDeclaringAtomsRoute
   ConceptsEffectsRoute: typeof ConceptsEffectsRoute
   ConceptsExportingAtomsRoute: typeof ConceptsExportingAtomsRoute
+  ExamplesActionAtomsRoute: typeof ExamplesActionAtomsRoute
+  ExamplesAsyncDataRoute: typeof ExamplesAsyncDataRoute
+  ExamplesBasicCounterRoute: typeof ExamplesBasicCounterRoute
+  ExamplesFormManagementRoute: typeof ExamplesFormManagementRoute
+  ExamplesPersistenceRoute: typeof ExamplesPersistenceRoute
   OverviewHowItWorksRoute: typeof OverviewHowItWorksRoute
   OverviewSetupRoute: typeof OverviewSetupRoute
+  UtilitiesAtomFamilyRoute: typeof UtilitiesAtomFamilyRoute
+  UtilitiesAtomWithDefaultRoute: typeof UtilitiesAtomWithDefaultRoute
+  UtilitiesAtomWithQueryRoute: typeof UtilitiesAtomWithQueryRoute
+  UtilitiesAtomWithReducerRoute: typeof UtilitiesAtomWithReducerRoute
+  AdvancedIndexRoute: typeof AdvancedIndexRoute
   ConceptsIndexRoute: typeof ConceptsIndexRoute
   ExamplesIndexRoute: typeof ExamplesIndexRoute
+  UtilitiesIndexRoute: typeof UtilitiesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -154,6 +325,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/utilities/': {
+      id: '/utilities/'
+      path: '/utilities'
+      fullPath: '/utilities'
+      preLoaderRoute: typeof UtilitiesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/examples/': {
@@ -170,6 +348,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConceptsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/advanced/': {
+      id: '/advanced/'
+      path: '/advanced'
+      fullPath: '/advanced'
+      preLoaderRoute: typeof AdvancedIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/utilities/atomWithReducer': {
+      id: '/utilities/atomWithReducer'
+      path: '/utilities/atomWithReducer'
+      fullPath: '/utilities/atomWithReducer'
+      preLoaderRoute: typeof UtilitiesAtomWithReducerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/utilities/atomWithQuery': {
+      id: '/utilities/atomWithQuery'
+      path: '/utilities/atomWithQuery'
+      fullPath: '/utilities/atomWithQuery'
+      preLoaderRoute: typeof UtilitiesAtomWithQueryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/utilities/atomWithDefault': {
+      id: '/utilities/atomWithDefault'
+      path: '/utilities/atomWithDefault'
+      fullPath: '/utilities/atomWithDefault'
+      preLoaderRoute: typeof UtilitiesAtomWithDefaultRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/utilities/atomFamily': {
+      id: '/utilities/atomFamily'
+      path: '/utilities/atomFamily'
+      fullPath: '/utilities/atomFamily'
+      preLoaderRoute: typeof UtilitiesAtomFamilyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/overview/setup': {
       id: '/overview/setup'
       path: '/overview/setup'
@@ -182,6 +395,41 @@ declare module '@tanstack/react-router' {
       path: '/overview/how-it-works'
       fullPath: '/overview/how-it-works'
       preLoaderRoute: typeof OverviewHowItWorksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/examples/persistence': {
+      id: '/examples/persistence'
+      path: '/examples/persistence'
+      fullPath: '/examples/persistence'
+      preLoaderRoute: typeof ExamplesPersistenceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/examples/form-management': {
+      id: '/examples/form-management'
+      path: '/examples/form-management'
+      fullPath: '/examples/form-management'
+      preLoaderRoute: typeof ExamplesFormManagementRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/examples/basic-counter': {
+      id: '/examples/basic-counter'
+      path: '/examples/basic-counter'
+      fullPath: '/examples/basic-counter'
+      preLoaderRoute: typeof ExamplesBasicCounterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/examples/async-data': {
+      id: '/examples/async-data'
+      path: '/examples/async-data'
+      fullPath: '/examples/async-data'
+      preLoaderRoute: typeof ExamplesAsyncDataRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/examples/action-atoms': {
+      id: '/examples/action-atoms'
+      path: '/examples/action-atoms'
+      fullPath: '/examples/action-atoms'
+      preLoaderRoute: typeof ExamplesActionAtomsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/concepts/exporting-atoms': {
@@ -212,19 +460,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConceptsActionAtomsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/advanced/testing': {
+      id: '/advanced/testing'
+      path: '/advanced/testing'
+      fullPath: '/advanced/testing'
+      preLoaderRoute: typeof AdvancedTestingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/advanced/async': {
+      id: '/advanced/async'
+      path: '/advanced/async'
+      fullPath: '/advanced/async'
+      preLoaderRoute: typeof AdvancedAsyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdvancedAsyncRoute: AdvancedAsyncRoute,
+  AdvancedTestingRoute: AdvancedTestingRoute,
   ConceptsActionAtomsRoute: ConceptsActionAtomsRoute,
   ConceptsDeclaringAtomsRoute: ConceptsDeclaringAtomsRoute,
   ConceptsEffectsRoute: ConceptsEffectsRoute,
   ConceptsExportingAtomsRoute: ConceptsExportingAtomsRoute,
+  ExamplesActionAtomsRoute: ExamplesActionAtomsRoute,
+  ExamplesAsyncDataRoute: ExamplesAsyncDataRoute,
+  ExamplesBasicCounterRoute: ExamplesBasicCounterRoute,
+  ExamplesFormManagementRoute: ExamplesFormManagementRoute,
+  ExamplesPersistenceRoute: ExamplesPersistenceRoute,
   OverviewHowItWorksRoute: OverviewHowItWorksRoute,
   OverviewSetupRoute: OverviewSetupRoute,
+  UtilitiesAtomFamilyRoute: UtilitiesAtomFamilyRoute,
+  UtilitiesAtomWithDefaultRoute: UtilitiesAtomWithDefaultRoute,
+  UtilitiesAtomWithQueryRoute: UtilitiesAtomWithQueryRoute,
+  UtilitiesAtomWithReducerRoute: UtilitiesAtomWithReducerRoute,
+  AdvancedIndexRoute: AdvancedIndexRoute,
   ConceptsIndexRoute: ConceptsIndexRoute,
   ExamplesIndexRoute: ExamplesIndexRoute,
+  UtilitiesIndexRoute: UtilitiesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

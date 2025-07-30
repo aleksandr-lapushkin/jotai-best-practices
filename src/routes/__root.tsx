@@ -18,7 +18,7 @@ export const Route = createRootRoute({
   component: () => (
     <>
         <Provider store={store}>
-                <DevTools store={store}/>
+                <DevTools store={store} position='bottom-right'/>
                 <SidebarProvider>
                     <AppSidebar />
                     <SidebarInset>
