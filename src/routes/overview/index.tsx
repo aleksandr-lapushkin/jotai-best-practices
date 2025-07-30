@@ -1,7 +1,7 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { SectionCard } from '@/components/ui/section-card'
-import { ArrowRight, Lightbulb, Settings } from 'lucide-react'
+import { Lightbulb, Settings } from 'lucide-react'
 
 export const Route = createFileRoute('/overview/')({
   component: OverviewIndexComponent,

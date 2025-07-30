@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CodeBlock } from '@/components/ui/code-block'
-import { Database, Zap, Infinity, RefreshCw } from 'lucide-react'
+import { Database, Zap, Infinity as InfinityIcon, RefreshCw } from 'lucide-react'
 
 export const Route = createFileRoute('/utilities/atomWithQuery')({
   component: AtomWithQueryComponent,
@@ -112,7 +112,7 @@ const UserProfile = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Infinity className="h-5 w-5 text-primary" />
+              <InfinityIcon className="h-5 w-5 text-primary" />
               atomWithInfiniteQuery
             </CardTitle>
             <CardDescription>

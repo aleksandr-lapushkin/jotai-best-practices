@@ -12,13 +12,13 @@ export const Route = createFileRoute('/concepts/action-atoms')({
 })
 
 const myAtom = atom("hello")
-const capitalise = atom(null, (get, set) => {
+const capitalise = atom(null, (_, set) => {
   set(myAtom, (curr) => curr[0].toUpperCase() + curr.slice(1))
 })
-const replace = atom(null, (get, set, payload: string) => {
+const replace = atom(null, (_, set, payload: string) => {
   set(myAtom, payload)
 })
-const replaceAndCapitalise = atom(null, (get, set, payload: string) => {
+const replaceAndCapitalise = atom(null, (_, set, payload: string) => {
   set(replace, payload)
   set(capitalise)
 })
