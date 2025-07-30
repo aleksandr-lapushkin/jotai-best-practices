@@ -56,12 +56,12 @@ const data: NavData = {
       url: "/concepts",
       items: [
         {
-          title: "Structuring atoms",
-          url: "/concepts/declaring-atoms",
-        },
-        {
           title: "Action atoms",
           url: "/concepts/action-atoms",
+        },
+        {
+          title: "Structuring atoms",
+          url: "/concepts/declaring-atoms",
         },
         {
           title: "Exporting atoms",

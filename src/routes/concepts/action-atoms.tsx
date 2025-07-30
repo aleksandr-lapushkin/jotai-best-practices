@@ -1,11 +1,101 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CodeBlock } from '@/components/ui/code-block'
-import { Zap, Code, GitBranch, Clock } from 'lucide-react'
+import { Zap, Code as CodeIcon, GitBranch, Clock } from 'lucide-react'
+import { Code } from '@/components/ui/code'
+import { atom, useAtomValue, useSetAtom } from 'jotai'
+import { Button } from '@/components/ui/button'
+import { useState } from 'react'
 
 export const Route = createFileRoute('/concepts/action-atoms')({
   component: ActionAtomsComponent,
 })
+
+const myAtom = atom("hello")
+const capitalise = atom(null, (get, set) => {
+  set(myAtom, (curr) => curr[0].toUpperCase() + curr.slice(1))
+})
+const replace = atom(null, (get, set, payload: string) => {
+  set(myAtom, payload)
+})
+const replaceAndCapitalise = atom(null, (get, set, payload: string) => {
+  set(replace, payload)
+  set(capitalise)
+})
+const doAsyncAction = atom(null, async () => {
+  const response = await fetch('https://jsonplaceholder.typicode.com/todos/1')
+  return response.json()
+})
+function CapitaliseExample() {
+  const doCapitalise = useSetAtom(capitalise)
+  const atomValue = useAtomValue(myAtom)
+
+  return (
+    <div className="text-center space-y-2">
+      <p>{atomValue}</p>
+
+    <Button onClick={() => doCapitalise()} variant="outline" size="sm">
+      Capitalise
+      </Button>
+    </div>
+  )
+}
+
+function ReplaceExample() {
+  const doReplace = useSetAtom(replace)
+  const atomValue = useAtomValue(myAtom)
+
+  return (
+    <div className="text-center space-y-2">
+      <p>{atomValue}</p>
+
+      <Button onClick={() => doReplace("test")} variant="outline" size="sm">
+        Replace
+      </Button>
+    </div>
+  )
+}
+
+function ComposeExample() {
+  
+  const atomValue = useAtomValue(myAtom)
+  const doReplace = useSetAtom(replaceAndCapitalise)
+  return (
+    <div className="text-center space-y-2">
+      <p>{atomValue}</p>
+
+      <Button onClick={() => doReplace("let's do both!")} variant="outline" size="sm">
+        Do Both
+      </Button>
+    </div>
+  )
+}
+
+function AsyncActionExample() {
+  const performAsyncAction = useSetAtom(doAsyncAction)
+  const [lastResult, setLastResult] = useState('')
+
+  const handleClick = async () => {
+    try {
+      const result = await performAsyncAction()
+      setLastResult(JSON.stringify(result, null, 2))
+      
+    } catch (error) {
+      console.error('Action failed:', error)
+    }
+  }
+
+  return (
+    <div className="text-center space-y-2">
+      <CodeBlock language='json'>
+        {lastResult}
+      </CodeBlock>
+      <Button onClick={handleClick} variant="outline" size="sm">
+        Perform Async Action
+      </Button>
+    </div>
+  )
+}
 
 function ActionAtomsComponent() {
   return (
@@ -37,7 +127,7 @@ function ActionAtomsComponent() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Code className="h-5 w-5 text-primary" />
+              <CodeIcon className="h-5 w-5 text-primary" />
               Action Without Payload
             </CardTitle>
             <CardDescription>
@@ -46,8 +136,8 @@ function ActionAtomsComponent() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p>
-              For actions that don't need any input parameters, set the read function to 
-              <code className="bg-muted px-1 rounded mx-1">null</code>.
+              For actions that don't need any input parameters, set the read function on the atom to 
+              <Code>null</Code>.
             </p>
             
             <CodeBlock language="typescript">
@@ -63,6 +153,7 @@ const doCapitalise = useSetAtom(capitalise)
 // Does not require an arg!
 doCapitalise()`}
             </CodeBlock>
+          <CapitaliseExample />
           </CardContent>
         </Card>
 
@@ -93,6 +184,7 @@ const doReplace = useSetAtom(replace)
 // Needs an argument!
 doReplace("test")`}
             </CodeBlock>
+          <ReplaceExample />
           </CardContent>
         </Card>
 
@@ -129,6 +221,7 @@ const replaceAndCapitalise = atom(null, (get, set, payload: string) => {
     set(capitalise)
 })`}
             </CodeBlock>
+          <ComposeExample />
           </CardContent>
         </Card>
 
@@ -151,7 +244,7 @@ const replaceAndCapitalise = atom(null, (get, set, payload: string) => {
             <CodeBlock language="typescript">
 {`// Can also be async and return a Promise
 const asyncAction = atom(null, async (get, set) => {
-    const response = await fetch("http://google.com")
+    const response = await fetch("https://jsonplaceholder.typicode.com/todos/1")
     return response.json()
 })
 
@@ -161,81 +254,13 @@ const performAsyncAction = useSetAtom(asyncAction)
 const handleClick = async () => {
     try {
         const result = await performAsyncAction()
-        console.log('Action completed:', result)
+        return result.json()
     } catch (error) {
         console.error('Action failed:', error)
     }
 }`}
             </CodeBlock>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <span className="text-2xl">🔧</span>
-              Complex Example: User Management
-            </CardTitle>
-            <CardDescription>
-              A real-world example showing multiple action atoms working together
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <CodeBlock language="typescript">
-{`const userAtom = atom<User | null>(null)
-const loadingAtom = atom(false)
-const errorAtom = atom<string | null>(null)
-
-// Action to fetch user data
-const fetchUserAction = atom(null, async (get, set, userId: string) => {
-    set(loadingAtom, true)
-    set(errorAtom, null)
-    
-    try {
-        const response = await fetch(\`/api/users/\${userId}\`)
-        if (!response.ok) throw new Error('Failed to fetch user')
-        
-        const user = await response.json()
-        set(userAtom, user)
-    } catch (error) {
-        set(errorAtom, error.message)
-    } finally {
-        set(loadingAtom, false)
-    }
-})
-
-// Action to update user profile
-const updateUserAction = atom(null, async (get, set, updates: Partial<User>) => {
-    const currentUser = get(userAtom)
-    if (!currentUser) return
-    
-    set(loadingAtom, true)
-    
-    try {
-        const response = await fetch(\`/api/users/\${currentUser.id}\`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(updates)
-        })
-        
-        if (!response.ok) throw new Error('Failed to update user')
-        
-        const updatedUser = await response.json()
-        set(userAtom, updatedUser)
-    } catch (error) {
-        set(errorAtom, error.message)
-    } finally {
-        set(loadingAtom, false)
-    }
-})
-
-// Clear all user data
-const clearUserAction = atom(null, (get, set) => {
-    set(userAtom, null)
-    set(errorAtom, null)
-    set(loadingAtom, false)
-})`}
-            </CodeBlock>
+          <AsyncActionExample />
           </CardContent>
         </Card>
 
@@ -249,6 +274,7 @@ const clearUserAction = atom(null, (get, set) => {
           <CardContent>
             <ul className="space-y-2 list-disc list-inside text-muted-foreground">
               <li><strong className="text-foreground">Co-location:</strong> Business logic lives next to the state it modifies</li>
+              <li><strong className="text-foreground">Independence from React:</strong> State is modified outside of React's lifecycle</li>
               <li><strong className="text-foreground">Atomic updates:</strong> Multiple state changes happen in a single operation</li>
               <li><strong className="text-foreground">Type safety:</strong> Full TypeScript support for payloads and return types</li>
               <li><strong className="text-foreground">Composability:</strong> Action atoms can call other action atoms</li>

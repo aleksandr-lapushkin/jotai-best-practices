@@ -28,9 +28,9 @@ function HomeComponent() {
           </div>
           
           {/* Main Content */}
-      <div className="grid gap-8 lg:grid-cols-4 ">
+      <div className="grid gap-8 lg:grid-cols-1 ">
         {/* Getting Started */}
-        <Card className=" col-start-2 col-span-2 bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
+        <Card className="bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <span className="text-2xl">🚀</span>

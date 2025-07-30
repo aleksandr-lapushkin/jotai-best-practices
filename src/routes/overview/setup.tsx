@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CodeBlock } from '@/components/ui/code-block'
+import { Code } from '@/components/ui/code'
 
 export const Route = createFileRoute('/overview/setup')({
   component: SetupComponent,
@@ -29,24 +30,16 @@ function SetupComponent() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p>
-              An approach that works well is to define a custom <code className="bg-muted px-1 rounded">JotaiProvider</code> component, 
+              An approach that works well is to define a custom <Code>JotaiProvider</Code> component, 
               which allows you to inject a custom Jotai store and manage hydrating any atoms you might need, 
               like TanStack's Query Client atom.
             </p>
             <p>
               <strong>"Hydrating"</strong> in this sense is just a fancy word for "setting an atom's value".
             </p>
-          </CardContent>
-        </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <span className="text-2xl">💻</span>
-              Implementation Example
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+
+        
             <CodeBlock language="tsx">
 {`const JotaiProvider = ({store, children}: {store: Store, children}) => {
     return (
@@ -56,7 +49,21 @@ function SetupComponent() {
             </HydrateAtoms>
         </Provider>
     )
-}`}
+}
+
+const HydrateAtoms = ({children}) => {
+    useHydrateAtoms([
+        [queryClientAtom, queryClient],
+        // Add any other atoms you want to hydrate here
+    ])
+    return (
+        <>
+            {children}
+        </>
+    )
+}
+
+`}
             </CodeBlock>
           </CardContent>
         </Card>
@@ -74,38 +81,10 @@ function SetupComponent() {
               <li><strong>Atom Hydration:</strong> Centralized place to initialize atoms with specific values</li>
               <li><strong>Integration Ready:</strong> Perfect for integrating with other libraries like TanStack Query</li>
               <li><strong>Encapsulation:</strong> Keeps Jotai setup logic contained and reusable</li>
+              <li><strong>Flexibility:</strong> Can easily extend to support more complex setups like running global effects</li>
             </ul>
           </CardContent>
         </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <span className="text-2xl">🚀</span>
-              When to Use This Pattern
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p>
-              This custom provider pattern is especially useful when you need to:
-            </p>
-            <ul className="space-y-2 list-disc list-inside ml-4">
-              <li>Initialize atoms with specific values on app startup</li>
-              <li>Integrate Jotai with other state management libraries during migration</li>
-              <li>Provide different store configurations for testing vs production</li>
-              <li>Handle server-side rendering with pre-populated state</li>
-              <li>Set up atoms that depend on external services or configurations</li>
-            </ul>
-            <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mt-4">
-              <p className="text-sm text-blue-800">
-                <strong>Pro Tip:</strong> For simple applications, you can often use Jotai without any custom setup. 
-                The default provider works great for most use cases.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        
       </div>
     </div>
   )

@@ -32,7 +32,7 @@ export const Route = createRootRoute({
                                 </div>
                                 <ModeToggle />
                         </header>
-                        <main>
+                        <main className='max-w-6xl mx-auto px-4 py-8'>
                         <Outlet />
                         <TanStackRouterDevtools />
                         </main>

@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CodeBlock } from '@/components/ui/code-block'
 import { CheckCircle, XCircle } from 'lucide-react'
+import { Code } from '@/components/ui/code'
 
 export const Route = createFileRoute('/concepts/declaring-atoms')({
   component: DeclaringAtomsComponent,
@@ -49,14 +50,14 @@ function DeclaringAtomsComponent() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p>
-              This makes it easier to derive other atoms and makes it easier to reason about state.
+              This makes it easier to derive other atoms and makes it easier to reason about state when refactoring your code or implementing new features.
             </p>
             
             <div className="space-y-4">
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
-                  <span className="font-semibold text-green-700 dark:text-green-300">Do ✅</span>
+                  <span className="font-semibold text-green-700 dark:text-green-300">Do</span>
                 </div>
                 <CodeBlock language="typescript">
 {`const currentDateAtom = atom(new Date())
@@ -71,7 +72,7 @@ const derived = atom((get) => get(currentDate))`}
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
-                  <span className="font-semibold text-red-700 dark:text-red-300">Don't ❌</span>
+                  <span className="font-semibold text-red-700 dark:text-red-300">Don't</span>
                 </div>
                 <CodeBlock language="typescript">
 {`const state = atom({currentDate: new Date(), selectedDate: null})
@@ -98,7 +99,7 @@ const derived = atom((get) => get(state).currentDate)`}
             <p>
               The less state we need to update manually, the fewer error vectors we have. Moreover, 
               deriving values prevents race conditions or multiple updates. Any call to Jotai's 
-              <code className="bg-muted px-1 rounded mx-1">set</code> is immediate. Multiple sequential 
+              <Code>set</Code> is immediate. Multiple sequential 
               calls technically <strong>could</strong> cause multiple re-renders with inconsistent state in-between.
             </p>
             
@@ -106,7 +107,7 @@ const derived = atom((get) => get(state).currentDate)`}
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
-                  <span className="font-semibold text-green-700 dark:text-green-300">Do ✅</span>
+                  <span className="font-semibold text-green-700 dark:text-green-300">Do</span>
                 </div>
                 <CodeBlock language="typescript">
 {`const queryAtom = atom('hello world')
@@ -117,7 +118,7 @@ const hasQueryAtom = atom((get) => !!get(queryAtom))`}
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
-                  <span className="font-semibold text-red-700 dark:text-red-300">Don't ❌</span>
+                  <span className="font-semibold text-red-700 dark:text-red-300">Don't</span>
                 </div>
                 <CodeBlock language="typescript">
 {`const queryAtom = atom('hello world')
@@ -156,7 +157,7 @@ useEffect(() => {
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
-                  <span className="font-semibold text-green-700 dark:text-green-300">Do ✅</span>
+                  <span className="font-semibold text-green-700 dark:text-green-300">Do</span>
                 </div>
                 <CodeBlock language="typescript">
 {`const myState = atom('test')
@@ -176,7 +177,7 @@ mutateAction({myStateValue: 'ayy', add: 2})`}
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
-                  <span className="font-semibold text-red-700 dark:text-red-300">Don't ❌</span>
+                  <span className="font-semibold text-red-700 dark:text-red-300">Don't</span>
                 </div>
                 <CodeBlock language="typescript">
 {`const [myStateValue, setMyState] = useAtom(myState)
@@ -188,6 +189,55 @@ const mutateState = useCallback((payload: {myStateValue: string, add: number}) =
 }, [])
 
 mutateState({myStateValue: 'ayy', add: 2})`}
+                </CodeBlock>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <span className="text-2xl">3️⃣</span>
+              Consider custom write functions
+            </CardTitle>
+            <CardDescription>
+              Define how data can be mutated directly within the atom
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p>
+              This is a slightly more advanced pattern when compared to declaring separate actions, but it probably is the most idiomatic one: how data can be mutated is part of the data definition.
+            </p>
+            
+            <div className="space-y-4">
+              <div>
+               
+                <CodeBlock language="typescript">
+                  {`const myState = atom(
+  { someField: 'test', anotherField: 5 }, 
+   (get, set, payload:
+    | { type: "increment" | "decrement", value: number }
+    | {type: "updateField", value: string}) => {
+      switch (payload.type) {
+        case "increment":
+          set(myState, (curr) => ({ ...curr, anotherField: curr.anotherField + payload.value }))
+          break
+        case "decrement":
+          set(myState, (curr) => ({ ...curr, anotherField: curr.anotherField - payload.value }))
+          break
+        case "updateField":
+          set(myState, (curr) => ({ ...curr, someField: payload.value }))
+          break
+      }
+    })
+)
+
+// In component:
+const [value, updateValue] = useAtom(myState)
+updateValue({ type: 'increment', value: 2 }) // Increment anotherField by 2
+updateValue({ type: 'updateField', value: 'new value' }) // Update someField
+`}
                 </CodeBlock>
               </div>
             </div>
