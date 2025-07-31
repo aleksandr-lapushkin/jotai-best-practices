@@ -34,7 +34,7 @@ function InnerObserveExample() {
   const toggleMyAtom = () => setMyAtom((prev) => !prev)
   return (
     
-    <div className="space-y-4">
+    <div className="space-y-4 space-x-2">
       MyAtom: <Code>{myAtomValue.toString()}</Code>
       OtherAtom: <Code>{otherAtomValue.toString()}</Code>
       <Button onClick={toggleMyAtom} variant="outline" size="sm">
@@ -60,7 +60,7 @@ function FlipperAtomExample() {
   useAtomValue(flipperAtomEffect)
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 space-x-2">
       MyAtom: <Code>{myAtomValue.toString()}</Code>
       OtherAtom: <Code>{otherAtomValue.toString()}</Code>
       <Button onClick={toggleMyAtom} variant="outline" size="sm">
@@ -82,7 +82,7 @@ function WithAtomEffectExample() {
   const toggleMyAtom = () => setMyAtom((prev) => !prev)
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 space-x-2">
       MyAtom: <Code>{myAtomValue.toString()}</Code>
       OtherAtom: <Code>{otherAtomValue.toString()}</Code>
       <Button onClick={toggleMyAtom} variant="outline" size="sm">
