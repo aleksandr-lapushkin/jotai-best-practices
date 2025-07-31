@@ -13,7 +13,10 @@ interface SectionCardProps {
 
 export function SectionCard({ title, description, url, icon: IconComponent, topics }: SectionCardProps) {
   return (
-    <Card className="group hover:shadow-md transition-shadow flex flex-col h-full">
+    <Link 
+      to={url}
+    >
+    <Card className="group hover:shadow-md hover:bg-primary/5 transition-all flex flex-col h-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-3">
           <div className="p-2 bg-primary/10 rounded-lg">
@@ -36,14 +39,14 @@ export function SectionCard({ title, description, url, icon: IconComponent, topi
         </ul>
       </CardContent>
       <CardFooter className="mt-auto">
-        <Link 
-          to={url}
+        <span 
           className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors font-medium text-sm"
         >
           Learn more
           <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-        </Link>
+        </span>
       </CardFooter>
-    </Card>
+      </Card>
+    </Link>
   )
 }

@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CodeBlock } from '@/components/ui/code-block'
 import { TestTube, CheckCircle, Target } from 'lucide-react'
+import { Code } from '@/components/ui/code'
 
 export const Route = createFileRoute('/advanced/testing')({
   component: TestingComponent,
@@ -475,6 +476,35 @@ describe('User atoms', () => {
           </CardContent>
         </Card>
 
+         <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <span className="text-2xl">🥸</span>
+              Mocking query atoms and mutations
+            </CardTitle>
+            <CardDescription>
+              How to handle integrations with APIs
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p>
+              Since query atoms are read-only, you might be wondering what's the proper approach to testing them? Typically, a good approach is to use <Code>msw</Code> or a similar library to mock your API calls.
+            </p>
+            <p>It's important to note, however, that you shouldn't need to do this often. Times when mocking API calls is reasonable:
+          </p>
+            <ul className="space-y-2 list-disc list-inside">
+                <li>When you're testing atoms or effects directly</li>
+                <li>When you're building an integration test</li>
+            </ul>
+            <p>
+              In most other cases, you should be able to simply pre-fill the desired response within the Query Client that you use for your tests.
+            </p>
+            <p>
+              If you do end up using facade hooks for your atoms, then you can actually just mock out the hook itself to avoid interacting with Jotai at all.
+            </p>
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -491,30 +521,6 @@ describe('User atoms', () => {
               <li><strong className="text-foreground">Co-located utilities:</strong> Test helpers live with the atoms they test</li>
               <li><strong className="text-foreground">Clean test setup:</strong> Eliminates boilerplate in individual tests</li>
               <li><strong className="text-foreground">Consistent patterns:</strong> Same approach works across all atom domains</li>
-            </ul>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-muted/30 border-border">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <span className="text-2xl">🚧</span>
-              Content Coming Soon
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">
-              This section will be expanded with comprehensive testing patterns, including:
-            </p>
-            <ul className="mt-4 space-y-2 list-disc list-inside text-muted-foreground">
-              <li>Testing async atoms and suspense</li>
-              <li>Mocking external dependencies</li>
-              <li>Testing atom families and dynamic atoms</li>
-              <li>Integration testing with multiple atoms</li>
-              <li>Testing effects and side effects</li>
-              <li>Performance testing and optimization</li>
-              <li>End-to-end testing strategies</li>
-              <li>Testing with React 18 features</li>
             </ul>
           </CardContent>
         </Card>

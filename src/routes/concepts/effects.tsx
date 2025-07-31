@@ -1,12 +1,96 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CodeBlock } from '@/components/ui/code-block'
-import { Workflow, Eye, Zap, Target, Lightbulb, ArrowRight } from 'lucide-react'
-import { Link } from '@tanstack/react-router'
+import { Workflow, Eye, Zap, Target, Lightbulb } from 'lucide-react'
+import { Code } from '@/components/ui/code'
+import { createStore, Provider, useAtom, useAtomValue } from 'jotai'
+import { atom } from 'jotai'
+import { atomEffect, observe, withAtomEffect } from 'jotai-effect'
+import { Button } from '@/components/ui/button'
 
 export const Route = createFileRoute('/concepts/effects')({
   component: EffectsComponent,
 })
+
+const myAtom = atom(false)
+const otherAtom = atom(true)
+const localStore = createStore()
+observe((get, set) => {
+  if (get(myAtom)) {
+    set(otherAtom, (prev) => !prev)
+  }
+}, localStore)
+
+function ObserveExample() {
+  return <Provider store={localStore}>
+    <InnerObserveExample />
+  </Provider>
+
+}
+
+function InnerObserveExample() {
+  const [myAtomValue, setMyAtom] = useAtom(myAtom)
+  const otherAtomValue = useAtomValue(otherAtom)
+  const toggleMyAtom = () => setMyAtom((prev) => !prev)
+  return (
+    
+    <div className="space-y-4">
+      MyAtom: <Code>{myAtomValue.toString()}</Code>
+      OtherAtom: <Code>{otherAtomValue.toString()}</Code>
+      <Button onClick={toggleMyAtom} variant="outline" size="sm">
+        Toggle MyAtom
+      </Button>
+      </div>
+      
+  )
+}
+
+const flipperAtomEffect = atomEffect((get, set) => {
+  if (get(myAtom)) {
+    set(otherAtom, (prev) => !prev)
+  }
+})
+
+function FlipperAtomExample() {
+  const [myAtomValue, setMyAtom] = useAtom(myAtom)
+  const otherAtomValue = useAtomValue(otherAtom)
+  const toggleMyAtom = () => setMyAtom((prev) => !prev)
+
+  // This must be mounted for the effect to work
+  useAtomValue(flipperAtomEffect)
+
+  return (
+    <div className="space-y-4">
+      MyAtom: <Code>{myAtomValue.toString()}</Code>
+      OtherAtom: <Code>{otherAtomValue.toString()}</Code>
+      <Button onClick={toggleMyAtom} variant="outline" size="sm">
+        Toggle MyAtom
+      </Button>
+    </div>
+  )
+}
+
+withAtomEffect(myAtom, (get, set) => {
+  if (get(myAtom)) {
+    set(otherAtom, (prev) => !prev)
+  }
+})
+
+function WithAtomEffectExample() {
+  const [myAtomValue, setMyAtom] = useAtom(myAtom)
+  const otherAtomValue = useAtomValue(otherAtom)
+  const toggleMyAtom = () => setMyAtom((prev) => !prev)
+
+  return (
+    <div className="space-y-4">
+      MyAtom: <Code>{myAtomValue.toString()}</Code>
+      OtherAtom: <Code>{otherAtomValue.toString()}</Code>
+      <Button onClick={toggleMyAtom} variant="outline" size="sm">
+        Toggle MyAtom
+      </Button>
+    </div>
+  )
+}
 
 function EffectsComponent() {
   return (
@@ -27,8 +111,7 @@ function EffectsComponent() {
         </CardHeader>
         <CardContent>
           <p>
-            Effects in Jotai allow you to react to state changes automatically. Think of them as 
-            <strong>action atoms that trigger on state changes</strong> rather than being called explicitly. 
+            Effects in Jotai allow you to react to state changes automatically. Think of them as <strong>action atoms that trigger on state changes</strong> rather than being called explicitly. 
             While action atoms are imperative ("do this now"), effects are reactive ("do this whenever X changes").
           </p>
           <p className="mt-2">
@@ -43,7 +126,7 @@ function EffectsComponent() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Eye className="h-5 w-5 text-primary" />
-              Global Effects with `observe`
+              Global Effects with <Code>observe</Code>
             </CardTitle>
             <CardDescription>
               Define global effects bound to a specific store
@@ -58,10 +141,12 @@ function EffectsComponent() {
             <CodeBlock language="typescript">
 {`const flipper = observe((get, set) => {
     if (get(myAtom)) {
-        set(otherAtom, false) 
+        //Toggle only when myAtom is true
+        set(otherAtom, (prev) => !prev)
     }
 }, store)`}
             </CodeBlock>
+            <ObserveExample />
             
             <div className="bg-primary/5 p-4 rounded-lg border border-primary/20">
               <p className="text-sm">
@@ -77,7 +162,7 @@ function EffectsComponent() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Zap className="h-5 w-5 text-primary" />
-              Effect Atoms with `atomEffect`
+              Effect Atoms with <Code>atomEffect</Code>
             </CardTitle>
             <CardDescription>
               Create effect atoms that must be mounted to work
@@ -92,7 +177,7 @@ function EffectsComponent() {
             <CodeBlock language="typescript">
 {`const flipperAtom = atomEffect((get, set) => {
     if (get(myAtom)) {
-        set(otherAtom, false)
+        set(otherAtom, (prev) => !prev)
     }
 })
 
@@ -103,6 +188,7 @@ const RootComponent = () => {
     return <div>...</div>
 }`}
             </CodeBlock>
+            <FlipperAtomExample />
             
             <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border border-yellow-200 dark:border-yellow-800">
               <p className="text-sm text-yellow-800 dark:text-yellow-200">
@@ -118,7 +204,7 @@ const RootComponent = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Target className="h-5 w-5 text-primary" />
-              Targeted Effects with `withAtomEffect`
+              Targeted Effects with <Code>withAtomEffect</Code>
             </CardTitle>
             <CardDescription>
               Define effects that run when specific atoms change
@@ -127,20 +213,21 @@ const RootComponent = () => {
           <CardContent className="space-y-4">
             <p>
               Use <code className="bg-muted px-1 rounded">withAtomEffect</code> to create effects 
-              that are automatically mounted when the original atom is used.
+              that are automatically mounted when the <strong>original atom</strong> is used.
             </p>
             
             <CodeBlock language="typescript">
 {`const flipperAtom = withAtomEffect(myAtom, (get, set) => {
     if (get(myAtom)) {
-        set(otherAtom, false)
+        set(otherAtom, (prev) => !prev)
     }
 })
 
 // Effect is mounted while original atom is mounted
 useAtomValue(myAtom)`}
             </CodeBlock>
-            
+            <WithAtomEffectExample />
+
             <div className="bg-primary/5 p-4 rounded-lg border border-primary/20">
               <p className="text-sm">
                 <strong>Best of both worlds:</strong> This approach gives you the automatic mounting of 
@@ -246,11 +333,11 @@ const App = () => {
             <ul className="space-y-2 list-disc list-inside text-muted-foreground">
               <li><strong className="text-foreground">Use sparingly:</strong> Effects are powerful but can make state flow harder to follow</li>
               <li><strong className="text-foreground">Keep effects focused:</strong> Each effect should have a single, clear responsibility</li>
+              <li><strong className="text-foreground">Hide complexity:</strong> Consumers of your state should not need to know about the effects</li>
               <li><strong className="text-foreground">Avoid effect chains:</strong> Be careful not to create cascading effects that are hard to debug</li>
               <li><strong className="text-foreground">Consider performance:</strong> Effects run on every state change of their dependencies</li>
               <li><strong className="text-foreground">Handle cleanup:</strong> Use cleanup functions for subscriptions and timers</li>
-              <li><strong className="text-foreground">Test effects:</strong> Mock stores make effect testing straightforward</li>
-              <li><strong className="text-foreground">Document side-effects:</strong> Make it clear when atoms have effects attached</li>
+              <li><strong className="text-foreground">Pick the right flavour:</strong> Carefully consider the use case for your effects - which type of effect would work best?</li>
             </ul>
           </CardContent>
         </Card>
@@ -271,103 +358,6 @@ const App = () => {
               <li><strong className="text-foreground">External integrations:</strong> Update third-party libraries when state changes</li>
               <li><strong className="text-foreground">Development tools:</strong> Debugging and development-time logging</li>
             </ul>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <span className="text-2xl">🔗</span>
-              Connecting the Concepts
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p>
-              Effects complete the Jotai best practices picture by adding reactive capabilities to your 
-              well-structured atomic state:
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <h4 className="font-semibold text-primary">Structure + Effects</h4>
-                <p className="text-sm text-muted-foreground">
-                  Use domain-based organization to keep effects focused and maintainable, just like your atoms.
-                </p>
-              </div>
-              <div className="space-y-2">
-                <h4 className="font-semibold text-primary">Composition + Effects</h4>
-                <p className="text-sm text-muted-foreground">
-                  Effects can depend on derived atoms, automatically reacting to complex state changes.
-                </p>
-              </div>
-              <div className="space-y-2">
-                <h4 className="font-semibold text-primary">Actions + Effects</h4>
-                <p className="text-sm text-muted-foreground">
-                  Action atoms handle explicit operations; effects handle automatic reactions to state changes.
-                </p>
-              </div>
-              <div className="space-y-2">
-                <h4 className="font-semibold text-primary">Boundaries + Effects</h4>
-                <p className="text-sm text-muted-foreground">
-                  Apply the same export control principles - hide effect complexity behind clean atom interfaces.
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <span className="text-2xl">🎓</span>
-              You've Mastered Jotai Best Practices!
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p>
-              Congratulations! You now understand the complete toolkit for building maintainable Jotai applications:
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div className="p-3 bg-muted rounded-lg">
-                <div className="font-medium text-primary mb-1">Foundation</div>
-                <div className="text-sm text-muted-foreground">Structure atoms by domain, choose proper granularity</div>
-              </div>
-              <div className="p-3 bg-muted rounded-lg">
-                <div className="font-medium text-primary mb-1">Composition</div>
-                <div className="text-sm text-muted-foreground">Build complex state from simple, focused atoms</div>
-              </div>
-              <div className="p-3 bg-muted rounded-lg">
-                <div className="font-medium text-primary mb-1">Business Logic</div>
-                <div className="text-sm text-muted-foreground">Encapsulate operations with action atoms</div>
-              </div>
-              <div className="p-3 bg-muted rounded-lg">
-                <div className="font-medium text-primary mb-1">API Design</div>
-                <div className="text-sm text-muted-foreground">Control access with clean export boundaries</div>
-              </div>
-              <div className="p-3 bg-muted rounded-lg">
-                <div className="font-medium text-primary mb-1">Reactivity</div>
-                <div className="text-sm text-muted-foreground">Handle side-effects with targeted effects</div>
-              </div>
-            </div>
-            <p>
-              Ready to see these concepts in action? Explore the Examples section for real-world implementations, 
-              or dive into Advanced Topics for patterns like async data management and testing strategies.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 mt-4">
-              <Link 
-                to="/examples" 
-                className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
-              >
-                <span>Explore: Interactive Examples</span>
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link 
-                to="/advanced" 
-                className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
-              >
-                <span>Or dive into: Advanced Topics</span>
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
           </CardContent>
         </Card>
       </div>

@@ -1,102 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CodeBlock } from '@/components/ui/code-block'
-import { CheckCircle, XCircle, ArrowRight, AlertTriangle } from 'lucide-react'
-import { Link } from '@tanstack/react-router'
-import { atom, useAtomValue, useSetAtom } from 'jotai'
-import { Button } from '@/components/ui/button'
-import { useState } from 'react'
+import { CheckCircle, XCircle, AlertTriangle } from 'lucide-react'
+import { Code } from '@/components/ui/code'
 
 export const Route = createFileRoute('/concepts/action-atoms')({
   component: ActionAtomsComponent,
 })
-
-// Example atoms for demos
-const userNameAtom = atom('John Doe')
-const userEmailAtom = atom('john@example.com')
-const isLoadingAtom = atom(false)
-const errorAtom = atom<string | null>(null)
-
-const updateUserAtom = atom(
-  null,
-  async (_, set, userData: { name: string; email: string }) => {
-    set(isLoadingAtom, true)
-    set(errorAtom, null)
-    
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      set(userNameAtom, userData.name)
-      set(userEmailAtom, userData.email)
-    } catch (error) {
-      set(errorAtom, error instanceof Error ? error.message : 'Unknown error')
-    } finally {
-      set(isLoadingAtom, false)
-    }
-  }
-)
-
-const resetUserAtom = atom(
-  null,
-  (_, set) => {
-    set(userNameAtom, '')
-    set(userEmailAtom, '')
-    set(errorAtom, null)
-    set(isLoadingAtom, false)
-  }
-)
-
-function ActionAtomDemo() {
-  const userName = useAtomValue(userNameAtom)
-  const userEmail = useAtomValue(userEmailAtom)
-  const isLoading = useAtomValue(isLoadingAtom)
-  const error = useAtomValue(errorAtom)
-  const updateUser = useSetAtom(updateUserAtom)
-  const resetUser = useSetAtom(resetUserAtom)
-
-  const [formName, setFormName] = useState('')
-  const [formEmail, setFormEmail] = useState('')
-
-  const handleUpdate = () => {
-    updateUser({ name: formName || 'Jane Smith', email: formEmail || 'jane@example.com' })
-  }
-
-  return (
-    <div className="space-y-4 p-4 bg-muted rounded-lg">
-      <div className="space-y-2">
-        <p><strong>Current Name:</strong> {userName}</p>
-        <p><strong>Current Email:</strong> {userEmail}</p>
-        {isLoading && <p className="text-primary">Loading...</p>}
-        {error && <p className="text-destructive">Error: {error}</p>}
-      </div>
-      
-      <div className="grid grid-cols-2 gap-2">
-        <input
-          placeholder="New name"
-          value={formName}
-          onChange={(e) => setFormName(e.target.value)}
-          className="p-2 text-sm border rounded"
-        />
-        <input
-          placeholder="New email"
-          value={formEmail}
-          onChange={(e) => setFormEmail(e.target.value)}
-          className="p-2 text-sm border rounded"
-        />
-      </div>
-      
-      <div className="flex gap-2">
-        <Button onClick={handleUpdate} disabled={isLoading} size="sm">
-          Update User
-        </Button>
-        <Button onClick={resetUser} variant="outline" size="sm">
-          Reset
-        </Button>
-      </div>
-    </div>
-  )
-}
 
 function ActionAtomsComponent() {
   return (
@@ -141,8 +51,8 @@ function ActionAtomsComponent() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p>
-              Action atoms use the two-parameter form of <code>atom()</code> where the first parameter 
-              is <code>null</code> (no read function) and the second is the write function:
+              Action atoms use the two-parameter form of <Code>atom()</Code> where the first parameter 
+              is <Code>null</Code> (no read function) and the second is the write function:
             </p>
             
             <CodeBlock language="typescript">
@@ -231,73 +141,9 @@ mutateState({myStateValue: 'ayy', add: 2})`}
               </div>
             </div>
 
-            <p>
-              One of the main benefits of this approach is coordinating updates across multiple atoms 
-              to prevent inconsistent intermediate states:
-            </p>
-            
-            <div className="space-y-4">
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
-                  <span className="font-semibold text-green-700 dark:text-green-300">Good: Coordinated Updates</span>
-                </div>
-                <CodeBlock language="typescript">
-{`const userAtom = atom({ name: '', email: '' })
-const isLoadingAtom = atom(false)
-const errorAtom = atom(null)
-
-const updateUserAtom = atom(
-  null,
-  async (get, set, userData: { name: string; email: string }) => {
-    set(isLoadingAtom, true)
-    set(errorAtom, null)
-    
-    try {
-      const response = await updateUserAPI(userData)
-      set(userAtom, response.user)
-    } catch (error) {
-      set(errorAtom, error.message)
-    } finally {
-      set(isLoadingAtom, false)
-    }
-  }
-)`}
-                </CodeBlock>
-              </div>
-
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
-                  <span className="font-semibold text-red-700 dark:text-red-300">Poor: Scattered Updates</span>
-                </div>
-                <CodeBlock language="typescript">
-{`// In a component - logic scattered, error-prone
-const [user, setUser] = useAtom(userAtom)
-const [isLoading, setLoading] = useAtom(isLoadingAtom)
-const [error, setError] = useAtom(errorAtom)
-
-const updateUser = async (userData) => {
-  setLoading(true)
-  setError(null)
-  
-  try {
-    const response = await updateUserAPI(userData)
-    setUser(response.user)
-  } catch (error) {
-    setError(error.message)
-  } finally {
-    setLoading(false)  // Easy to forget!
-  }
-}`}
-                </CodeBlock>
-              </div>
-            </div>
-
-            <div className="bg-muted p-4 rounded-lg">
-              <p className="text-sm font-medium mb-2">Try the coordinated approach:</p>
-              <ActionAtomDemo />
-            </div>
+           
+           
+           
           </CardContent>
         </Card>
 
@@ -341,15 +187,6 @@ const updateUserProfileAtom = atom(
     set(setUserEmailAtom, email)
     set(logUserUpdateAtom)
   }
-)
-
-// Even more complex composition
-const resetAndUpdateUserAtom = atom(
-  null,
-  (get, set, userData: { name: string; email: string }) => {
-    set(resetUserAtom)  // Clear everything first
-    set(updateUserProfileAtom, userData)  // Then update
-  }
 )`}
             </CodeBlock>
 
@@ -362,28 +199,6 @@ const resetAndUpdateUserAtom = atom(
                 </p>
               </div>
             </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <span className="text-2xl">🚀</span>
-              Next Steps
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p>
-              Now you understand how to encapsulate business logic with action atoms. Next, you'll learn 
-              about exporting atoms - how to create clean APIs that control access to your state.
-            </p>
-            <Link 
-              to="/concepts/exporting-atoms" 
-              className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
-            >
-              <span>Up next: Exporting & Boundaries</span>
-              <ArrowRight className="h-4 w-4" />
-            </Link>
           </CardContent>
         </Card>
       </div>

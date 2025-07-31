@@ -4,6 +4,8 @@ import { CodeBlock } from '@/components/ui/code-block'
 import { CheckCircle, XCircle, Lightbulb, ArrowRight } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
 import { atom, useAtom, useAtomValue } from 'jotai'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 export const Route = createFileRoute('/concepts/composition')({
   component: CompositionComponent,
@@ -26,30 +28,32 @@ function CompositionDemo() {
   const greeting = useAtomValue(greetingAtom)
 
   return (
-    <div className="space-y-4 p-4 bg-muted rounded-lg">
+    <>
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="text-sm font-medium">First Name</label>
-          <input
+          <Label htmlFor="firstName" className="text-sm font-medium">First Name</Label>
+          <Input
+            id="firstName"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
             className="w-full p-2 text-sm border rounded"
           />
         </div>
         <div>
-          <label className="text-sm font-medium">Last Name</label>
-          <input
+          <Label htmlFor="lastName" className="text-sm font-medium">Last Name</Label>
+          <Input
+            id="lastName"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
             className="w-full p-2 text-sm border rounded"
           />
         </div>
       </div>
-      <div className="space-y-2">
+      <div className="space-y-2 my-4">
         <p><strong>Full Name:</strong> {fullName}</p>
         <p><strong>Greeting:</strong> {greeting}</p>
       </div>
-    </div>
+    </>
   )
 }
 
@@ -114,17 +118,24 @@ const greetingAtom = atom(
 )`}
             </CodeBlock>
 
-            <div className="bg-muted p-4 rounded-lg">
-              <p className="text-sm font-medium mb-2">Try it yourself:</p>
-              <CompositionDemo />
-            </div>
-
-            <div className="bg-primary/5 p-4 rounded-lg border border-primary/20">
+            <Card className="p-4 rounded-lg">
+              <CardTitle className="text-lg font-semibold">Interactive Example</CardTitle>
+              <CardDescription className="text-sm text-muted-foreground">
+                Try changing the first and last names below to see how the full name and greeting update automatically
+              </CardDescription>
+              <CardContent>
+                <CompositionDemo />
+                <div className="bg-primary/5 p-4 rounded-lg border border-primary/20">
               <p className="text-sm">
                 <strong>Key insight:</strong> Notice how changing the first or last name automatically updates 
                 both the full name AND the greeting. This is Jotai's automatic dependency tracking at work.
               </p>
             </div>
+              </CardContent>
+            </Card>
+            
+
+            
           </CardContent>
         </Card>
 
@@ -193,7 +204,7 @@ const layoutConfigAtom = atom((get) => ({
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />

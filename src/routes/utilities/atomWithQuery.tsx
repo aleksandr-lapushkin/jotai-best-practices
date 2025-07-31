@@ -1,11 +1,134 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CodeBlock } from '@/components/ui/code-block'
-import { Database, Zap, Infinity as InfinityIcon, RefreshCw } from 'lucide-react'
+import { Database, Zap } from 'lucide-react'
+import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { atomWithMutation, atomWithQuery, atomWithSuspenseQuery } from 'jotai-tanstack-query'
+import { Code } from '@/components/ui/code'
+import { Button } from '@/components/ui/button'
+import { Suspense } from 'react'
+import { atomEffect } from 'jotai-effect'
 
 export const Route = createFileRoute('/utilities/atomWithQuery')({
   component: AtomWithQueryComponent,
 })
+
+const someAtom = atom(1)
+
+const myQueryAtom = atomWithSuspenseQuery((get) => ({
+  queryKey: ['my-query', get(someAtom)],
+  queryFn: async () => {
+    const response = await fetch(`https://jsonplaceholder.typicode.com/todos/${get(someAtom)}`)
+    return response.json() as Promise<Todo>
+  }
+}))
+
+const otherAtom = atom(1)
+const nonSuspendingQueryAtom = atomWithQuery((get) => ({
+  queryKey: ['my-non-suspending-query', get(otherAtom)],
+  queryFn: async () => {
+    const response = await fetch(`https://jsonplaceholder.typicode.com/todos/${get(otherAtom)}`)
+    return response.json() as Promise<Todo>
+  }
+}))
+
+function SuspendingQueryExample() {
+  const data = useAtomValue(myQueryAtom)
+  const [someAtomValue, setSomeAtom] = useAtom(someAtom)
+  return (
+    <div className='space-y-4'>
+      <div className="flex gap-2">
+      <Button onClick={() => setSomeAtom((prev) => prev + 1)}>
+        Increment ID Value
+      </Button>
+      <Code>
+        Current ID: {someAtomValue}
+        </Code>
+      </div>
+      <h2 className="mt-4 text-lg font-semibold">Query Result:</h2>
+      <CodeBlock language='json'>{data.isSuccess ? JSON.stringify(data.data) : 'Loading...'}</CodeBlock>
+    </div>
+  )
+}
+
+function NonSuspendingQueryExample() {
+  const data = useAtomValue(nonSuspendingQueryAtom)
+  const [someAtomValue, setSomeAtom] = useAtom(otherAtom)
+  return (
+    <div className='space-y-4'>
+      <div className="flex gap-2">
+      <Button onClick={() => setSomeAtom((prev) => prev + 1)}>
+        Increment ID Value
+      </Button>
+      <Code>
+        Current ID: {someAtomValue}
+        </Code>
+      </div>
+      <h2 className="mt-4 text-lg font-semibold">Query Result:</h2>
+      <CodeBlock language='json'>{data.isSuccess ? JSON.stringify(data.data) : 'Loading...'}</CodeBlock>
+    </div>
+  )
+}
+
+const todoData = atom(async (get) => {
+  const result = await get(myQueryAtom)
+
+  return result.data
+})
+
+ 
+const mutableTodoData = atom<Todo | null>(null)
+const todoAtomEffect = atomEffect((get, set) => {
+  get(todoData).then((res)=> set(mutableTodoData, res))
+})
+const currentTodoData = atom((get) => {
+  get(todoAtomEffect)
+  return get(mutableTodoData)
+})
+
+type Todo = {
+  id: number
+  completed: boolean
+}
+
+
+const mutationAtom = atomWithMutation(() => ({
+  mutationFn: (data: { id: number, completed: true }) => {
+    return fetch(`https://jsonplaceholder.typicode.com/todos/${data.id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        id: data.id,
+        completed: data.completed,
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+    })
+    .then((response) => response.json())
+  }
+}))
+
+const updateTodo = atom(null, async (get, set, data: { id: number, completed: true }) => {
+  set(mutableTodoData, (curr) => (curr ? { ...curr, completed: data.completed } : null))
+  get(mutationAtom).mutate(data)
+  
+})
+
+function AtomWithMutationExample() {
+  
+  const todo = useAtomValue(currentTodoData)
+  const updateTodoValue = useSetAtom(updateTodo)
+
+  return (
+    <div className='space-y-4'>
+      <h2 className="text-lg font-semibold">Todo Item:</h2>
+      <CodeBlock language='json'>{todo ? JSON.stringify(todo) : 'No todo selected'}</CodeBlock>
+      <Button onClick={() => updateTodoValue({ id: todo?.id || 1, completed: true })}>
+        Mark as Completed
+      </Button>
+    </div>
+  )
+}
 
 function AtomWithQueryComponent() {
   return (
@@ -41,23 +164,39 @@ function AtomWithQueryComponent() {
               Basic atomWithSuspenseQuery
             </CardTitle>
             <CardDescription>
-              The example from your notes showing suspense integration
+              Using atomWithSuspenseQuery to fetch data using TanStack Query
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <CodeBlock language="typescript">
-{`const myQueryAtom = atomWithSuspenseQuery((get) => ({
+              {`const someAtom = atom(1)
+const myQueryAtom = atomWithSuspenseQuery((get) => ({
     queryKey: ['my-query', get(someAtom)],
     queryFn: () => {
-        return fetch(URL + get(params))
+        return fetch(\`https://jsonplaceholder.typicode.com/todos/\${get(someAtom)}\`)
     }
 }))
 
-const derivedQueryValue = atom(async (get) => {
-    const value = await get(myQueryAtom)
-    return value.data ?? {}
-})`}
+const SuspendingQueryExample = () => {
+    const data = useAtomValue(myQueryAtom)
+    const [someAtomValue, setSomeAtom] = useAtom(someAtom)
+    return (
+        <>
+            <Button onClick={() => setSomeAtom((prev) => prev + 1)}>
+                Increment ID Value
+            </Button>
+            <Code className="mt-4">
+                Current ID: {someAtomValue}
+            </Code>
+            <h2 className="mt-4 text-lg font-semibold">Query Result:</h2>
+            <CodeBlock language='json'>{data.isSuccess ? JSON.stringify(data.data) : 'Loading...'}</CodeBlock>
+        </>
+    )
+}`}
             </CodeBlock>
+            <Suspense fallback={<div>A suspense fallback!</div>}>
+              <SuspendingQueryExample />
+            </Suspense>
           </CardContent>
         </Card>
 
@@ -106,173 +245,82 @@ const UserProfile = () => {
     )
 }`}
             </CodeBlock>
+            <NonSuspendingQueryExample />
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <InfinityIcon className="h-5 w-5 text-primary" />
-              atomWithInfiniteQuery
+              <Database className="h-5 w-5 text-primary" />
+              Mutations with optimistic updates
             </CardTitle>
             <CardDescription>
-              Handling paginated data with infinite scrolling
+              Using atomWithMutation for optimistic updates
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <CodeBlock language="typescript">
-{`const searchTermAtom = atom('')
-const pageSizeAtom = atom(20)
+{`const todoData = atom(async (get) => {
+  const result = await get(myQueryAtom)
 
-const infinitePostsQuery = atomWithInfiniteQuery((get) => ({
-    queryKey: ['posts', get(searchTermAtom)],
-    queryFn: async ({ pageParam = 0 }) => {
-        const searchTerm = get(searchTermAtom)
-        const pageSize = get(pageSizeAtom)
-        
-        const response = await fetch(
-            \`/api/posts?page=\${pageParam}&limit=\${pageSize}&search=\${searchTerm}\`
-        )
-        return response.json()
-    },
-    getNextPageParam: (lastPage, pages) => {
-        return lastPage.hasMore ? pages.length : undefined
-    },
-    initialPageParam: 0,
-}))
-
-// Flattened posts derived atom
-const allPostsAtom = atom((get) => {
-    const queryResult = get(infinitePostsQuery)
-    return queryResult.data?.pages.flatMap(page => page.posts) ?? []
+  return result.data
 })
 
-// Usage component
-const InfinitePostList = () => {
-    const searchTerm = useAtomValue(searchTermAtom)
-    const allPosts = useAtomValue(allPostsAtom)
-    const queryResult = useAtomValue(infinitePostsQuery)
-    
-    const {
-        fetchNextPage,
-        hasNextPage,
-        isFetchingNextPage,
-        isLoading,
-        error
-    } = queryResult
-    
-    if (isLoading) return <div>Loading posts...</div>
-    if (error) return <div>Error loading posts</div>
-    
-    return (
-        <div>
-            {allPosts.map(post => (
-                <div key={post.id}>{post.title}</div>
-            ))}
-            
-            {hasNextPage && (
-                <button 
-                    onClick={() => fetchNextPage()}
-                    disabled={isFetchingNextPage}
-                >
-                    {isFetchingNextPage ? 'Loading more...' : 'Load More'}
-                </button>
-            )}
-        </div>
-    )
-}`}
-            </CodeBlock>
-          </CardContent>
-        </Card>
+ 
+const mutableTodoData = atom<Todo | null>(null)
+const todoAtomEffect = atomEffect((get, set) => {
+  get(todoData).then((res)=> set(mutableTodoData, res))
+})
+const currentTodoData = atom((get) => {
+  get(todoAtomEffect)
+  return get(mutableTodoData)
+})
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <RefreshCw className="h-5 w-5 text-primary" />
-              Mutations with atomWithMutation
-            </CardTitle>
-            <CardDescription>
-              Handling data mutations with optimistic updates
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <CodeBlock language="typescript">
-{`const todosQueryAtom = atomWithQuery(() => ({
-    queryKey: ['todos'],
-    queryFn: () => fetch('/api/todos').then(res => res.json())
+type Todo = {
+  id: number
+  completed: boolean
+}
+
+
+const mutationAtom = atomWithMutation(() => ({
+  mutationFn: (data: { id: number, completed: true }) => {
+    return fetch(\`https://jsonplaceholder.typicode.com/todos/\${data.id}\`, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        id: data.id,
+        completed: data.completed,
+      }),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      },
+    })
+    .then((response) => response.json())
+  }
 }))
 
-const addTodoMutation = atomWithMutation((get) => ({
-    mutationFn: async (newTodo: { title: string }) => {
-        const response = await fetch('/api/todos', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(newTodo)
-        })
-        return response.json()
-    },
-    onMutate: async (newTodo) => {
-        // Cancel outgoing refetches
-        await queryClient.cancelQueries({ queryKey: ['todos'] })
-        
-        // Snapshot previous value
-        const previousTodos = queryClient.getQueryData(['todos'])
-        
-        // Optimistically update
-        queryClient.setQueryData(['todos'], (old: any) => [
-            ...old,
-            { id: Date.now(), ...newTodo, completed: false }
-        ])
-        
-        return { previousTodos }
-    },
-    onError: (err, newTodo, context) => {
-        // Rollback on error
-        queryClient.setQueryData(['todos'], context?.previousTodos)
-    },
-    onSettled: () => {
-        // Always refetch after error or success
-        queryClient.invalidateQueries({ queryKey: ['todos'] })
-    }
-}))
+const updateTodo = atom(null, async (get, set, data: { id: number, completed: true }) => {
+  set(mutableTodoData, (curr) => (curr ? { ...curr, completed: data.completed } : null))
+  get(mutationAtom).mutate(data)
+  
+})
 
-const TodoApp = () => {
-    const { data: todos = [], isLoading } = useAtomValue(todosQueryAtom)
-    const { mutate: addTodo, isPending } = useAtomValue(addTodoMutation)
-    
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        const formData = new FormData(e.currentTarget)
-        const title = formData.get('title') as string
-        
-        if (title.trim()) {
-            addTodo({ title: title.trim() })
-            e.currentTarget.reset()
-        }
-    }
-    
-    return (
-        <div>
-            <form onSubmit={handleSubmit}>
-                <input name="title" placeholder="Add todo..." />
-                <button type="submit" disabled={isPending}>
-                    {isPending ? 'Adding...' : 'Add'}
-                </button>
-            </form>
-            
-            {isLoading ? (
-                <div>Loading todos...</div>
-            ) : (
-                <ul>
-                    {todos.map((todo: any) => (
-                        <li key={todo.id}>{todo.title}</li>
-                    ))}
-                </ul>
-            )}
-        </div>
-    )
+function AtomWithMutationExample() {
+  const todo = useAtomValue(currentTodoData)
+  const updateTodoValue = useSetAtom(updateTodo)
+
+  return (
+    <div className='space-y-4'>
+      <h2 className="text-lg font-semibold">Todo Item:</h2>
+      <CodeBlock language='json'>{todo ? JSON.stringify(todo) : 'No todo selected'}</CodeBlock>
+      <Button onClick={() => updateTodoValue({ id: todo?.id || 1, completed: true })}>
+        Mark as Completed
+      </Button>
+    </div>
+  )
 }`}
-            </CodeBlock>
+              </CodeBlock>
+            <AtomWithMutationExample />
           </CardContent>
         </Card>
 
@@ -291,27 +339,6 @@ const TodoApp = () => {
               <li><strong className="text-foreground">Suspense integration:</strong> Use React Suspense for loading states</li>
               <li><strong className="text-foreground">Reactive dependencies:</strong> Queries automatically refetch when atoms change</li>
               <li><strong className="text-foreground">Error handling:</strong> Built-in error states and retry logic</li>
-            </ul>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-muted/30 border-border">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <span className="text-2xl">🚧</span>
-              Coming Soon
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">
-              Additional patterns and advanced examples will be added here, including:
-            </p>
-            <ul className="mt-2 space-y-1 list-disc list-inside text-muted-foreground">
-              <li>Custom query client configuration</li>
-              <li>SSR and hydration patterns</li>
-              <li>Advanced caching strategies</li>
-              <li>Error boundary integration</li>
-              <li>Real-time data synchronization</li>
             </ul>
           </CardContent>
         </Card>

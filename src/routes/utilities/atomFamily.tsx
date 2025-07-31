@@ -1,11 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CodeBlock } from '@/components/ui/code-block'
-import { Users, Hash, Trash2 } from 'lucide-react'
+import { Users, Trash2 } from 'lucide-react'
 
 export const Route = createFileRoute('/utilities/atomFamily')({
   component: AtomFamilyComponent,
 })
+
 
 function AtomFamilyComponent() {
   return (
@@ -67,59 +68,26 @@ const MyComponent = ({messageId}: {messageId: string}) => {
     )
 }`}
             </CodeBlock>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Hash className="h-5 w-5 text-primary" />
-              Complex Parameters
-            </CardTitle>
-            <CardDescription>
-              Using objects and complex types as atom family keys
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p>
-              atomFamily can use complex objects as keys, not just strings or numbers:
-            </p>
-            
+            <p>Contrasted with a dictionary-based approach:</p>
             <CodeBlock language="typescript">
-{`interface TodoFilter {
-    userId: string
-    status: 'pending' | 'completed' | 'all'
-    priority?: 'high' | 'medium' | 'low'
-}
+              {`const messageCheckStatusDict = atom<Record<string, boolean>>({})
 
-// Using complex objects as keys
-const filteredTodosAtom = atomFamily((filter: TodoFilter) => 
-    atom(async (get) => {
-        const todos = get(allTodosAtom)
-        
-        return todos.filter(todo => {
-            if (filter.userId && todo.userId !== filter.userId) return false
-            if (filter.status !== 'all' && todo.status !== filter.status) return false
-            if (filter.priority && todo.priority !== filter.priority) return false
-            return true
-        })
-    })
-)
-
-// Usage
-const TodoList = ({ userId }: { userId: string }) => {
-    const pendingTodos = useAtomValue(filteredTodosAtom({ 
-        userId, 
-        status: 'pending' 
-    }))
-    
-    const highPriorityTodos = useAtomValue(filteredTodosAtom({ 
-        userId, 
-        status: 'all', 
-        priority: 'high' 
-    }))
-    
-    return <div>...</div>
+const MyComponentDict = ({messageId}: {messageId: string}) => {
+    const [status, setStatus] = useAtom(messageCheckStatusDict)
+    const isChecked = status[messageId] || false
+    const setChecked = (checked: boolean) => {
+        setStatus((prev) => ({...prev, [messageId]: checked}))
+    }
+    return (
+        <div>
+            <input 
+                type="checkbox" 
+                checked={isChecked} 
+                onChange={(e) => setChecked(e.target.checked)}
+            />
+            Message {messageId}
+        </div>
+    )
 }`}
             </CodeBlock>
           </CardContent>
@@ -170,92 +138,6 @@ const cleanupUnusedAtoms = atom(null, (get, set, activeIds: string[]) => {
                 memory leaks in applications with dynamic keys. Always remove atoms that are no longer needed.
               </p>
             </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <span className="text-2xl">🏪</span>
-              Real-World Example: Shopping Cart Items
-            </CardTitle>
-            <CardDescription>
-              Managing individual item states in a shopping cart
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <CodeBlock language="typescript">
-{`interface CartItem {
-    id: string
-    quantity: number
-    selected: boolean
-    notes?: string
-}
-
-// Atom family for individual cart items
-const cartItemAtom = atomFamily((itemId: string) => 
-    atom<CartItem>({
-        id: itemId,
-        quantity: 1,
-        selected: true
-    })
-)
-
-// Derived atom for all cart items
-const allCartItemsAtom = atom((get) => {
-    const itemIds = get(cartItemIdsAtom) // Assume this exists
-    return itemIds.map(id => get(cartItemAtom(id)))
-})
-
-// Actions for cart items
-const updateItemQuantityAtom = atomFamily((itemId: string) =>
-    atom(null, (get, set, quantity: number) => {
-        const currentItem = get(cartItemAtom(itemId))
-        set(cartItemAtom(itemId), { ...currentItem, quantity })
-    })
-)
-
-const toggleItemSelectionAtom = atomFamily((itemId: string) =>
-    atom(null, (get, set) => {
-        const currentItem = get(cartItemAtom(itemId))
-        set(cartItemAtom(itemId), { ...currentItem, selected: !currentItem.selected })
-    })
-)
-
-// Component usage
-const CartItemComponent = ({ itemId }: { itemId: string }) => {
-    const item = useAtomValue(cartItemAtom(itemId))
-    const updateQuantity = useSetAtom(updateItemQuantityAtom(itemId))
-    const toggleSelection = useSetAtom(toggleItemSelectionAtom(itemId))
-    
-    return (
-        <div className="cart-item">
-            <input 
-                type="checkbox" 
-                checked={item.selected}
-                onChange={() => toggleSelection()}
-            />
-            <input 
-                type="number" 
-                value={item.quantity}
-                onChange={(e) => updateQuantity(parseInt(e.target.value))}
-            />
-        </div>
-    )
-}
-
-// Cleanup when item is removed from cart
-const removeCartItemAtom = atom(null, (get, set, itemId: string) => {
-    // Remove from item IDs list
-    const currentIds = get(cartItemIdsAtom)
-    set(cartItemIdsAtom, currentIds.filter(id => id !== itemId))
-    
-    // Clean up the atom family entries
-    cartItemAtom.remove(itemId)
-    updateItemQuantityAtom.remove(itemId)
-    toggleItemSelectionAtom.remove(itemId)
-})`}
-            </CodeBlock>
           </CardContent>
         </Card>
 

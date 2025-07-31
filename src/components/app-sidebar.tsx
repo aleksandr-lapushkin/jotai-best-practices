@@ -61,10 +61,6 @@ const data: NavData = {
           url: "/concepts/declaring-atoms",
         },
         {
-          title: "Atom Composition",
-          url: "/concepts/composition",
-        },
-        {
           title: "Action Atoms",
           url: "/concepts/action-atoms",
         },
@@ -104,10 +100,6 @@ const data: NavData = {
       title: "Advanced Topics",
       url: "/advanced",
       items: [
-        {
-          title: "Managing Async",
-          url: "/advanced/async",
-        },
         {
           title: "Testing",
           url: "/advanced/testing",

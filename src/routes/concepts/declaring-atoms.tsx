@@ -1,8 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CodeBlock } from '@/components/ui/code-block'
-import { CheckCircle, XCircle, ArrowRight } from 'lucide-react'
-import { Link } from '@tanstack/react-router'
+import { CheckCircle, XCircle } from 'lucide-react'
 
 export const Route = createFileRoute('/concepts/declaring-atoms')({
   component: DeclaringAtomsComponent,
@@ -151,6 +150,10 @@ useEffect(() => {
               Organizing atoms by domain makes it easier to understand, maintain, and refactor your state management. 
               Each domain becomes a cohesive unit with clear boundaries.
             </p>
+
+            <p>
+              Define all atoms that belong to a given domain together in a single file.
+            </p>
             
             <div className="space-y-4">
               <div>
@@ -208,28 +211,6 @@ const someComputedAtom = atom((get) => {
                 own atoms, derived state, and internal logic. This makes your app easier to reason about and refactor.
               </p>
             </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <span className="text-2xl">🚀</span>
-              Next Steps
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p>
-              Now that you understand how to structure and organize atoms effectively, you're ready to 
-              learn about composition - how to build complex state from simple atomic building blocks.
-            </p>
-            <Link 
-              to="/concepts/composition" 
-              className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
-            >
-              <span>Up next: Atom Composition</span>
-              <ArrowRight className="h-4 w-4" />
-            </Link>
           </CardContent>
         </Card>
       </div>

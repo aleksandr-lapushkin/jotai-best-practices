@@ -79,7 +79,7 @@ function HomeComponent() {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              Live, editable code examples you can experiment with in real-time
+              Live code examples you can experiment with in real-time
             </p>
           </CardContent>
         </Card>

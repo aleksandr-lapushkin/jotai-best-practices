@@ -1,8 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CodeBlock } from '@/components/ui/code-block'
-import { Lock, Share, CheckCircle, XCircle, ArrowRight } from 'lucide-react'
-import { Link } from '@tanstack/react-router'
+import { Lock, Share, CheckCircle, XCircle } from 'lucide-react'
 
 export const Route = createFileRoute('/concepts/exporting-atoms')({
   component: ExportingAtomsComponent,
@@ -91,56 +90,45 @@ const MyComponent = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-primary" />
-              Solution 1: Controlled Write API
+              <Lock className="h-5 w-5 text-primary" />
+              Cross-Domain Read-Only Access
             </CardTitle>
             <CardDescription>
-              Expose atoms with narrow, controlled mutation APIs
+              Simplest approach when you just need to share read-only state
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <p>
-              The correct approach is to always allow a <strong>very narrow, very specific</strong> set 
-              of operations on the data to the outside world.
+              If you need to read data from atoms within atoms across domain bounds, export a readonly version. 
+              This ensures that control over the data is still localized to the domain where the atom is defined.
             </p>
             
-            <CodeBlock language="typescript">
-{`// atoms.ts
-const _pageAtom = atom(0)
+            <div className="space-y-4">
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+                  <span className="font-semibold text-green-700 dark:text-green-300">Do</span>
+                </div>
+                <CodeBlock language="typescript">
+{`const currentDateAtom = atom(new Date())
+const readonlyCurrentDateAtom = atom((get) => get(currentDateAtom))
 
-// Expose an atom that returns the value of the underlying atom 
-// and exposes a very narrow API on the underlying data
-export const pageAtom = atom(
-    (get) => get(_pageAtom), 
-    (get, set, payload: {type: "add" | "sub", amount: number} = {type: "add", amount: 1}) => {
-        set(_pageAtom, (current) => {
-            const newValue = payload.type === "add" ? current + payload.amount : current - payload.amount
-            const clamped = Math.max(0, newValue)
-            return clamped
-        })
-    }
-)
-
-export const dataAtom = atom((get) => {
-    return fetch(URL + \`?page=\${get(_pageAtom)}\`)
-})
-
-// MyComponent.tsx
-// Now the consumer can't modify the data to be incorrect!
-const MyComponent = () => {
-    const myData = useAtomValue(dataAtom)
-    const updatePage = useSetAtom(pageAtom)
-
-    return (
-        <DataTable data={myData}>
-            <Pagination 
-                onNext={() => updatePage({type: "add"})}
-                onPrevious={() => updatePage({type: "sub"})}
-            />
-        </DataTable>
-    )
+export const Atoms = {
+    currentDate: readonlyCurrentDateAtom
 }`}
-            </CodeBlock>
+                </CodeBlock>
+              </div>
+
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
+                  <span className="font-semibold text-red-700 dark:text-red-300">Don't</span>
+                </div>
+                <CodeBlock language="typescript">
+{`export const currentDateAtom = atom(new Date())`}
+                </CodeBlock>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
@@ -148,7 +136,7 @@ const MyComponent = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Share className="h-5 w-5 text-primary" />
-              Solution 2: Action Atom Approach
+              Action Atoms
             </CardTitle>
             <CardDescription>
               Use dedicated action atoms for controlled mutations
@@ -191,53 +179,70 @@ const MyComponent = () => {
     )
 }`}
             </CodeBlock>
+            <p>
+              With this approach you can ensure that whoever accesses your data can only mutate it in a controlled way.
+            </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Lock className="h-5 w-5 text-primary" />
-              Cross-Domain Read-Only Access
+              <CheckCircle className="h-5 w-5 text-primary" />
+              Custom write functions
             </CardTitle>
             <CardDescription>
-              Safe pattern for reading atoms across domain boundaries
+              Expose atoms with narrow, controlled mutation APIs
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <p>
-              If you need to read data from atoms within atoms across domain bounds, export a readonly version. 
-              This ensures that control over the data is still localized to the domain where the atom is defined.
+              This is probably the most idiomatic approach when it comes to proper access control: state and how it can be mutated are defined together.
             </p>
             
-            <div className="space-y-4">
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
-                  <span className="font-semibold text-green-700 dark:text-green-300">Do</span>
-                </div>
-                <CodeBlock language="typescript">
-{`const currentDateAtom = atom(new Date())
-const readonlyCurrentDateAtom = atom((get) => get(currentDateAtom))
+            <CodeBlock language="typescript">
+{`// atoms.ts
+const _pageAtom = atom(0)
 
-export const Atoms = {
-    currentDate: readonlyCurrentDateAtom
+// Expose an atom that returns the value of the underlying atom 
+// and exposes a very narrow API on the underlying data
+export const pageAtom = atom(
+    (get) => get(_pageAtom), 
+    (get, set, payload: {type: "add" | "sub", amount: number} = {type: "add", amount: 1}) => {
+        set(_pageAtom, (current) => {
+            const newValue = payload.type === "add" ? current + payload.amount : current - payload.amount
+            const clamped = Math.max(0, newValue)
+            return clamped
+        })
+    }
+)
+
+export const dataAtom = atom((get) => {
+    return fetch(URL + \`?page=\${get(_pageAtom)}\`)
+})
+
+// MyComponent.tsx
+// Now the consumer can't modify the data to be incorrect!
+const MyComponent = () => {
+    const myData = useAtomValue(dataAtom)
+    const updatePage = useSetAtom(pageAtom)
+
+    return (
+        <DataTable data={myData}>
+            <Pagination 
+                onNext={() => updatePage({type: "add"})}
+                onPrevious={() => updatePage({type: "sub"})}
+            />
+        </DataTable>
+    )
 }`}
-                </CodeBlock>
-              </div>
-
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
-                  <span className="font-semibold text-red-700 dark:text-red-300">Don't</span>
-                </div>
-                <CodeBlock language="typescript">
-{`export const currentDateAtom = atom(new Date())`}
-                </CodeBlock>
-              </div>
-            </div>
+            </CodeBlock>
           </CardContent>
         </Card>
+
+
+
+
 
         <Card>
           <CardHeader>
@@ -302,7 +307,7 @@ export const Atoms = {
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
-                  <span className="font-semibold text-green-700 dark:text-green-300">Do: Direct Usage</span>
+                  <span className="font-semibold text-green-700 dark:text-green-300">Do: Direct Usage or local hooks</span>
                 </div>
                 <CodeBlock language="typescript">
 {`const myAtom = atom("hello")
@@ -312,7 +317,21 @@ const mutateMyAtom = atom(null, (get, set, payload: string) =>
 
 // In component
 const myAtomValue = useAtomValue(myAtom)
-const mutateMyAtomCallback = useSetAtom(mutateMyAtom)`}
+const mutateMyAtomCallback = useSetAtom(mutateMyAtom)
+   
+
+//This is also fine if the component gets too large as long as it's not exported outside the component
+function useState() {
+  const myAtomValue = useAtomValue(myAtom)
+  const mutateMyAtomCallback = useSetAtom(mutateMyAtom)
+
+  return {
+    myAtomValue,
+    mutateMyAtomCallback
+  }
+}
+                  
+`}
                 </CodeBlock>
               </div>
 
@@ -323,7 +342,7 @@ const mutateMyAtomCallback = useSetAtom(mutateMyAtom)`}
                 </div>
                 <CodeBlock language="typescript">
 {`// Somewhere outside the component
-const useMyState = () => {
+export const useMyState = () => {
     const myAtomValue = useAtomValue(myAtom)
     const mutateMyAtomCallback = useSetAtom(mutateMyAtom)
     
@@ -357,7 +376,7 @@ const { myAtomValue, mutateMyAtomCallback } = useMyState()`}
           </CardHeader>
           <CardContent>
             <ul className="space-y-2 list-disc list-inside text-muted-foreground">
-              <li><strong className="text-foreground">Never export writable atoms directly</strong> across domain boundaries</li>
+              <li><strong className="text-foreground">Never export writable atoms directly</strong></li>
               <li><strong className="text-foreground">Use read-only atom wrappers</strong> for cross-domain data access</li>
               <li><strong className="text-foreground">Expose specific action atoms</strong> with built-in validation</li>
               <li><strong className="text-foreground">Create controlled write APIs</strong> that enforce business rules</li>
@@ -365,32 +384,6 @@ const { myAtomValue, mutateMyAtomCallback } = useMyState()`}
               <li><strong className="text-foreground">Co-locate validation logic</strong> with the atoms that need it</li>
               <li><strong className="text-foreground">Export action atoms sparingly</strong> for unavoidable cross-domain mutations</li>
             </ul>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <span className="text-2xl">🎉</span>
-              Congratulations!
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p>
-              You've now mastered the core state management patterns! You understand how to structure atoms, 
-              compose them effectively, encapsulate business logic with action atoms, and create clean domain boundaries.
-            </p>
-            <p>
-              There's one more concept that completes the picture: <strong>Effects</strong> - reactive patterns 
-              for side-effects and external system integration.
-            </p>
-            <Link 
-              to="/concepts/effects" 
-              className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
-            >
-              <span>Next: Effects & Side Effects</span>
-              <ArrowRight className="h-4 w-4" />
-            </Link>
           </CardContent>
         </Card>
       </div>

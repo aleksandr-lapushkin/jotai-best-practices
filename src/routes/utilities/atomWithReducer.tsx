@@ -1,7 +1,7 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { CodeBlock } from '@/components/ui/code-block'
-import { Cog, ArrowRight, CheckCircle } from 'lucide-react'
+import { Cog } from 'lucide-react'
 
 export const Route = createFileRoute('/utilities/atomWithReducer')({
   component: AtomWithReducerComponent,
@@ -27,8 +27,8 @@ function AtomWithReducerComponent() {
         <CardContent>
           <p>
             <code className="bg-muted px-1 rounded">atomWithReducer</code> is a variation on a narrowly-scoped 
-            atom write function. It works until your state depends on its previous version. For non-derived 
-            self-referential atoms, <code className="bg-muted px-1 rounded">atomWithReducer</code> is a great option.
+            atom write function covered earlier in <Link className='underline' to="/concepts/exporting-atoms">Exporting & Boundaries</Link>. Reducers work well for non-derived 
+            potentially self-referential atoms.
           </p>
         </CardContent>
       </Card>
@@ -38,24 +38,26 @@ function AtomWithReducerComponent() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <span className="text-2xl">📅</span>
-              Basic Example: Date Management
+              Basic Example: Appended List
             </CardTitle>
             <CardDescription>
-              The example from your notes showing date manipulation
+              Using atomWithReducer to manage a list with append functionality
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <CodeBlock language="typescript">
 {`const myComplexState = atomWithReducer(
     // Initial state
-    { currentDate: new Date() },
+    { items: [] },
     // Reducer function - types are provided when initialising the reducer
-    (value: { currentDate: Date }, action: { type: "add" | "sub", payload: number }) => {
+    (value: { items: string[] }, action: { type: "add" | "remove" | "replace", payload: string[] }) => {
         switch(action.type) {
             case "add": 
-                return { currentDate: add(value.currentDate, action.payload, 'days') }
-            case "sub": 
-                return { currentDate: sub(value.currentDate, action.payload, 'days') }
+                return { items: [...value.items, ...action.payload] }
+            case "remove":
+                return { items: value.items.filter(item => !action.payload.includes(item)) }
+            case "replace":
+                return { items: action.payload }
             default: 
                 return value
         }
@@ -63,254 +65,31 @@ function AtomWithReducerComponent() {
 )
 
 const MyComponent = () => {
+    const items = useApiData()
     const [myComplexStateValue, setMyComplexState] = useAtom(myComplexState)
     
     return (
         <div>
-            <p>Current date: {myComplexStateValue.currentDate.toDateString()}</p>
-            <button onClick={() => setMyComplexState({ type: "add", payload: 5 })}>
-                Add 5 Days
+            <button onClick={() => setMyComplexState({ type: "add", payload: items })}>
+              Append all items
             </button>
-            <button onClick={() => setMyComplexState({ type: "sub", payload: 1 })}>
-                Subtract 1 Day
-            </button>
-        </div>
-    )
-}`}
-            </CodeBlock>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-primary" />
-              Counter with History
-            </CardTitle>
-            <CardDescription>
-              A more complex example showing state history tracking
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <CodeBlock language="typescript">
-{`interface CounterState {
-    value: number
-    history: number[]
-    maxHistory: number
-}
-
-type CounterAction = 
-    | { type: 'increment' }
-    | { type: 'decrement' }
-    | { type: 'reset' }
-    | { type: 'set', payload: number }
-    | { type: 'undo' }
-
-const counterWithHistoryAtom = atomWithReducer(
-    // Initial state
-    { value: 0, history: [], maxHistory: 10 },
-    // Reducer
-    (state: CounterState, action: CounterAction): CounterState => {
-        const addToHistory = (newValue: number) => {
-            const newHistory = [...state.history, state.value]
-            if (newHistory.length > state.maxHistory) {
-                newHistory.shift() // Remove oldest entry
-            }
-            return { ...state, value: newValue, history: newHistory }
-        }
-
-        switch (action.type) {
-            case 'increment':
-                return addToHistory(state.value + 1)
-            
-            case 'decrement':
-                return addToHistory(state.value - 1)
-            
-            case 'set':
-                return addToHistory(action.payload)
-            
-            case 'reset':
-                return { ...state, value: 0, history: [...state.history, state.value] }
-            
-            case 'undo':
-                if (state.history.length === 0) return state
-                const previousValue = state.history[state.history.length - 1]
-                const newHistory = state.history.slice(0, -1)
-                return { ...state, value: previousValue, history: newHistory }
-            
-            default:
-                return state
-        }
-    }
-)
-
-// Usage component
-const CounterWithHistory = () => {
-    const [counter, dispatch] = useAtom(counterWithHistoryAtom)
-    
-    return (
-        <div>
-            <h2>Value: {counter.value}</h2>
-            <p>History: {counter.history.join(', ')}</p>
-            
-            <button onClick={() => dispatch({ type: 'increment' })}>+</button>
-            <button onClick={() => dispatch({ type: 'decrement' })}>-</button>
-            <button onClick={() => dispatch({ type: 'reset' })}>Reset</button>
-            <button 
-                onClick={() => dispatch({ type: 'undo' })}
-                disabled={counter.history.length === 0}
-            >
-                Undo
+            <button onClick={() => setMyComplexState({ type: "replace", payload: items })}>
+              Replace all items
             </button>
         </div>
     )
 }`}
             </CodeBlock>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <ArrowRight className="h-5 w-5 text-primary" />
-              Form State Management
-            </CardTitle>
-            <CardDescription>
-              Managing complex form state with validation
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
+            <p>This would've been a bit more complicated if trying to build it using regular atoms. Notice that we have to define two separate Action Atoms, whereas the Reducer is part of the data definition itself.</p>
             <CodeBlock language="typescript">
-{`interface FormState {
-    fields: Record<string, string>
-    errors: Record<string, string>
-    touched: Record<string, boolean>
-    isSubmitting: boolean
-}
-
-type FormAction = 
-    | { type: 'SET_FIELD', field: string, value: string }
-    | { type: 'SET_ERROR', field: string, error: string }
-    | { type: 'CLEAR_ERROR', field: string }
-    | { type: 'TOUCH_FIELD', field: string }
-    | { type: 'SET_SUBMITTING', isSubmitting: boolean }
-    | { type: 'RESET' }
-
-const formAtom = atomWithReducer(
-    // Initial state
-    {
-        fields: { email: '', password: '', confirmPassword: '' },
-        errors: {},
-        touched: {},
-        isSubmitting: false
-    } as FormState,
-    // Reducer
-    (state: FormState, action: FormAction): FormState => {
-        switch (action.type) {
-            case 'SET_FIELD':
-                return {
-                    ...state,
-                    fields: { ...state.fields, [action.field]: action.value },
-                    // Clear error when user starts typing
-                    errors: { ...state.errors, [action.field]: '' }
-                }
-            
-            case 'SET_ERROR':
-                return {
-                    ...state,
-                    errors: { ...state.errors, [action.field]: action.error }
-                }
-            
-            case 'CLEAR_ERROR':
-                const { [action.field]: removedError, ...restErrors } = state.errors
-                return { ...state, errors: restErrors }
-            
-            case 'TOUCH_FIELD':
-                return {
-                    ...state,
-                    touched: { ...state.touched, [action.field]: true }
-                }
-            
-            case 'SET_SUBMITTING':
-                return { ...state, isSubmitting: action.isSubmitting }
-            
-            case 'RESET':
-                return {
-                    fields: { email: '', password: '', confirmPassword: '' },
-                    errors: {},
-                    touched: {},
-                    isSubmitting: false
-                }
-            
-            default:
-                return state
-        }
-    }
-)
-
-// Form validation logic
-const validateForm = (fields: Record<string, string>) => {
-    const errors: Record<string, string> = {}
-    
-    if (!fields.email) errors.email = 'Email is required'
-    if (!fields.password) errors.password = 'Password is required'
-    if (fields.password !== fields.confirmPassword) {
-        errors.confirmPassword = 'Passwords do not match'
-    }
-    
-    return errors
-}
-
-// Usage in form component
-const SignupForm = () => {
-    const [form, dispatch] = useAtom(formAtom)
-    
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        
-        // Validate all fields
-        const errors = validateForm(form.fields)
-        Object.entries(errors).forEach(([field, error]) => {
-            dispatch({ type: 'SET_ERROR', field, error })
-        })
-        
-        if (Object.keys(errors).length > 0) return
-        
-        dispatch({ type: 'SET_SUBMITTING', isSubmitting: true })
-        
-        try {
-            await submitForm(form.fields)
-            dispatch({ type: 'RESET' })
-        } catch (error) {
-            dispatch({ type: 'SET_ERROR', field: 'general', error: 'Submission failed' })
-        } finally {
-            dispatch({ type: 'SET_SUBMITTING', isSubmitting: false })
-        }
-    }
-    
-    return (
-        <form onSubmit={handleSubmit}>
-            <input
-                type="email"
-                value={form.fields.email}
-                onChange={(e) => dispatch({ 
-                    type: 'SET_FIELD', 
-                    field: 'email', 
-                    value: e.target.value 
-                })}
-                onBlur={() => dispatch({ type: 'TOUCH_FIELD', field: 'email' })}
-            />
-            {form.touched.email && form.errors.email && (
-                <span className="error">{form.errors.email}</span>
-            )}
-            
-            <button type="submit" disabled={form.isSubmitting}>
-                {form.isSubmitting ? 'Submitting...' : 'Submit'}
-            </button>
-        </form>
-    )
-}`}
-            </CodeBlock>
+              {`const itemsAtom = atom<string[]>([])
+const appendItemsActionAtom = atom(null, (get, set, items: string[]) => {
+    set(itemsAtom, (current) => [...current, ...items])
+})
+const replaceItemsActionAtom = atom(null, (get, set, items: string[]) => {
+    set(itemsAtom, items)
+})`}
+              </CodeBlock>
           </CardContent>
         </Card>
 
@@ -318,37 +97,18 @@ const SignupForm = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <span className="text-2xl">💡</span>
-              When to Use atomWithReducer
+              Key Benefits
             </CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-2 list-disc list-inside text-muted-foreground">
-              <li><strong className="text-foreground">Complex state transitions:</strong> When state changes depend on previous values</li>
+              <li><strong className="text-foreground">Support complex state transitions:</strong> When state changes depend on previous values</li>
+              <li><strong className="text-foreground">Tight coupling:</strong> Data mutations are part of the data definition itself</li>
               <li><strong className="text-foreground">Multiple related operations:</strong> When you have many ways to modify the same state</li>
               <li><strong className="text-foreground">Type safety:</strong> Reducer pattern provides excellent TypeScript support</li>
               <li><strong className="text-foreground">Predictable updates:</strong> All state changes go through the reducer function</li>
               <li><strong className="text-foreground">Debugging:</strong> Easy to log and track all state changes</li>
               <li><strong className="text-foreground">Testing:</strong> Reducers are pure functions that are easy to test</li>
-            </ul>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-muted/30 border-border">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <span className="text-2xl">🚧</span>
-              Coming Soon
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">
-              Additional examples and patterns will be added here, including:
-            </p>
-            <ul className="mt-2 space-y-1 list-disc list-inside text-muted-foreground">
-              <li>Integration with middleware for logging</li>
-              <li>Async reducer patterns</li>
-              <li>Combining with atomFamily for entity management</li>
-              <li>Performance optimization techniques</li>
             </ul>
           </CardContent>
         </Card>

@@ -3,8 +3,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { CodeBlock } from '@/components/ui/code-block'
 import { atom, useAtom } from 'jotai'
 import { Button } from '@/components/ui/button'
-import { Link } from '@tanstack/react-router'
-import { ArrowRight } from 'lucide-react'
 
 export const Route = createFileRoute('/overview/how-it-works')({
   component: HowItWorksComponent,
@@ -146,43 +144,6 @@ function Counter() {
                   Full TypeScript inference. Atoms know their types and derived atoms inherit them correctly.
                 </p>
               </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <span className="text-2xl">🚀</span>
-              Ready to Dive Deeper?
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p>
-              Now that you understand the basics, let's explore how to structure atoms effectively in real applications. 
-              The next section covers best practices for organizing atomic state.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-              <Link 
-                to="/concepts/declaring-atoms"
-                className="bg-card p-4 rounded-lg border border-border hover:bg-accent/50 transition-colors"
-              >
-                <div className="font-semibold text-primary mb-2 flex items-center gap-2">
-                  Next: Atom Structure
-                  <ArrowRight className="h-3 w-3" />
-                </div>
-                <p className="text-muted-foreground">Learn how to organize atoms by domain and avoid state sprawl</p>
-              </Link>
-              <Link 
-                to="/concepts/composition"
-                className="bg-card p-4 rounded-lg border border-border hover:bg-accent/50 transition-colors"
-              >
-                <div className="font-semibold text-primary mb-2 flex items-center gap-2">
-                  Then: Composition
-                  <ArrowRight className="h-3 w-3" />
-                </div>
-                <p className="text-muted-foreground">Master derived atoms and building complex state from simple pieces</p>
-              </Link>
             </div>
           </CardContent>
         </Card>
